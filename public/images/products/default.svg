@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Producto de supermercado">
+  <rect width="640" height="420" fill="#f6faf7"/>
+  <circle cx="500" cy="110" r="140" fill="#dff5e8"/>
+  <rect x="190" y="120" width="260" height="190" rx="34" fill="#ffffff" stroke="#18965a" stroke-width="10"/>
+  <path d="M235 120c0-47 38-85 85-85s85 38 85 85" fill="none" stroke="#18965a" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="274" cy="202" r="18" fill="#f4c430"/>
+  <circle cx="320" cy="202" r="18" fill="#e14f3d"/>
+  <circle cx="366" cy="202" r="18" fill="#2377c8"/>
+  <rect x="242" y="254" width="156" height="18" rx="9" fill="#dff5e8"/>
+</svg>

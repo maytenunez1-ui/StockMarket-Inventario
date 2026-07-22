@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
-@section('title', 'Autores')
+@section('title', 'Marcas')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
                 <p class="section-label">CRUD</p>
-                <h1 class="page-title">Autores</h1>
+                <h1 class="page-title">Marcas</h1>
             </div>
-            <a href="{{ route('admin.authors.create') }}" class="btn btn-primary">Nuevo autor</a>
+            <a href="{{ route('admin.authors.create') }}" class="btn btn-primary">Nueva marca</a>
         </div>
 
         <div class="table-card">
@@ -17,8 +17,8 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Nacionalidad</th>
-                        <th>Libros</th>
+                        <th>Origen</th>
+                        <th>Productos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -39,7 +39,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="empty-cell">No hay autores registrados.</td>
+                            <td colspan="4" class="empty-cell">No hay marcas registradas.</td>
                         </tr>
                     @endforelse
                 </tbody>

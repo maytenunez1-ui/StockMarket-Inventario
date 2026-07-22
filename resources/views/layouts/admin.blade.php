@@ -22,12 +22,12 @@
         <aside class="admin-sidebar card-surface">
             <p class="sidebar-eyebrow">Administracion</p>
             <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}">Resumen</a>
-            <a href="{{ route('admin.books.index') }}" class="sidebar-link {{ request()->routeIs('admin.books.*') ? 'is-active' : '' }}">Libros</a>
-            <a href="{{ route('admin.authors.index') }}" class="sidebar-link {{ request()->routeIs('admin.authors.*') ? 'is-active' : '' }}">Autores</a>
+            <a href="{{ route('admin.books.index') }}" class="sidebar-link {{ request()->routeIs('admin.books.*') ? 'is-active' : '' }}">Productos</a>
+            <a href="{{ route('admin.authors.index') }}" class="sidebar-link {{ request()->routeIs('admin.authors.*') ? 'is-active' : '' }}">Marcas</a>
             <a href="{{ route('admin.categories.index') }}" class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'is-active' : '' }}">Categorias</a>
-            <a href="{{ route('admin.publishers.index') }}" class="sidebar-link {{ request()->routeIs('admin.publishers.*') ? 'is-active' : '' }}">Editoriales</a>
+            <a href="{{ route('admin.publishers.index') }}" class="sidebar-link {{ request()->routeIs('admin.publishers.*') ? 'is-active' : '' }}">Proveedores</a>
             <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}">Usuarios</a>
-            <a href="{{ route('admin.loans.index') }}" class="sidebar-link {{ request()->routeIs('admin.loans.*') ? 'is-active' : '' }}">Prestamos</a>
+            <a href="{{ route('admin.loans.index') }}" class="sidebar-link {{ request()->routeIs('admin.loans.*') ? 'is-active' : '' }}">Compras</a>
         </aside>
 
         <section class="admin-content">

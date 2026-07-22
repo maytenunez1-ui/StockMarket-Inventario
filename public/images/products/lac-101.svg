@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Leche entera">
+  <rect width="640" height="420" fill="#eef7ff"/>
+  <circle cx="500" cy="110" r="140" fill="#d9ecff"/>
+  <rect x="236" y="84" width="168" height="270" rx="20" fill="#ffffff" stroke="#2377c8" stroke-width="10"/>
+  <path d="M258 84h124l-22-54h-80Z" fill="#ffffff" stroke="#2377c8" stroke-width="10" stroke-linejoin="round"/>
+  <rect x="258" y="166" width="124" height="72" rx="16" fill="#2377c8"/>
+  <text x="320" y="213" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#fff">LECHE</text>
+  <path d="M262 275c35-18 72-18 116 0v42H262Z" fill="#dff5e8"/>
+  <ellipse cx="320" cy="366" rx="132" ry="20" fill="#2377c8" opacity=".15"/>
+</svg>

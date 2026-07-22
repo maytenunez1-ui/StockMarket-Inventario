@@ -16,6 +16,6 @@
 </div>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Guardar editorial</button>
+    <button type="submit" class="btn btn-primary">Guardar proveedor</button>
     <a href="{{ route('admin.publishers.index') }}" class="btn btn-secondary">Cancelar</a>
 </div>

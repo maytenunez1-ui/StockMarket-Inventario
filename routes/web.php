@@ -27,8 +27,8 @@ Route::middleware('guest')->group(function (): void {
 
 Route::middleware('auth')->group(function (): void {
     Route::post('/cerrar-sesion', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    Route::get('/mis-prestamos', [LoanController::class, 'index'])->name('loans.index');
-    Route::post('/catalogo/{book:slug}/prestamo', [LoanController::class, 'store'])->name('loans.store');
+    Route::get('/mis-compras', [LoanController::class, 'index'])->name('loans.index');
+    Route::post('/catalogo/{book:slug}/compra', [LoanController::class, 'store'])->name('loans.store');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function (): void {

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Tortillas de maiz">
+  <rect width="640" height="420" fill="#f6fff3"/>
+  <circle cx="500" cy="90" r="140" fill="#dff5e8"/>
+  <ellipse cx="320" cy="245" rx="170" ry="92" fill="#f4d37a" stroke="#bf8f1d" stroke-width="8"/>
+  <ellipse cx="300" cy="218" rx="158" ry="86" fill="#f8df91" stroke="#bf8f1d" stroke-width="7"/>
+  <ellipse cx="343" cy="191" rx="142" ry="78" fill="#ffe8a6" stroke="#bf8f1d" stroke-width="7"/>
+  <path d="M240 180c36 20 90 25 148 0" fill="none" stroke="#e0bd62" stroke-width="8" stroke-linecap="round"/>
+  <text x="320" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#147342">TORTILLAS</text>
+  <ellipse cx="320" cy="348" rx="170" ry="20" fill="#bf8f1d" opacity=".14"/>
+</svg>

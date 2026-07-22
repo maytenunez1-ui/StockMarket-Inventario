@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Tajadas de platano verde">
+  <rect width="640" height="420" fill="#f8fff0"/>
+  <circle cx="126" cy="100" r="118" fill="#dff5e8"/>
+  <rect x="220" y="93" width="200" height="250" rx="30" fill="#147342" stroke="#0b512d" stroke-width="9"/>
+  <rect x="247" y="132" width="146" height="70" rx="18" fill="#f4c430"/>
+  <text x="320" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#0b512d">TAJADAS</text>
+  <g fill="#f6d44f" stroke="#d8a91d" stroke-width="5">
+    <ellipse cx="270" cy="262" rx="32" ry="18" transform="rotate(-18 270 262)"/>
+    <ellipse cx="322" cy="282" rx="32" ry="18" transform="rotate(15 322 282)"/>
+    <ellipse cx="374" cy="253" rx="32" ry="18" transform="rotate(-10 374 253)"/>
+  </g>
+  <ellipse cx="320" cy="365" rx="132" ry="18" fill="#0b512d" opacity=".16"/>
+</svg>

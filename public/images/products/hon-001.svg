@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Cafe hondureno">
+  <rect width="640" height="420" fill="#fff7ed"/>
+  <circle cx="505" cy="98" r="140" fill="#f4c430" opacity=".28"/>
+  <rect x="210" y="80" width="220" height="275" rx="28" fill="#6f3f23" stroke="#3f2417" stroke-width="9"/>
+  <path d="M235 122h170v92H235Z" fill="#147342"/>
+  <text x="320" y="162" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="800" fill="#fff">CAFE</text>
+  <text x="320" y="194" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#fff">HONDURAS</text>
+  <path d="M252 258c54-34 99-34 136 0-16 35-112 35-136 0Z" fill="#f4c430"/>
+  <g fill="#3f2417">
+    <ellipse cx="268" cy="302" rx="16" ry="10" transform="rotate(-25 268 302)"/>
+    <ellipse cx="318" cy="316" rx="16" ry="10" transform="rotate(18 318 316)"/>
+    <ellipse cx="371" cy="300" rx="16" ry="10" transform="rotate(-10 371 300)"/>
+  </g>
+  <ellipse cx="320" cy="372" rx="145" ry="18" fill="#3f2417" opacity=".16"/>
+</svg>

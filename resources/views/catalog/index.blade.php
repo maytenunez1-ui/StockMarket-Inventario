@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Catalogo de libros')
+@section('title', 'Catalogo de productos')
 
 @section('content')
     <section class="section-block">
@@ -14,7 +14,7 @@
         <form method="GET" action="{{ route('catalog.index') }}" class="filter-bar card-surface">
             <div class="field">
                 <label for="q">Buscar</label>
-                <input id="q" type="text" name="q" value="{{ $search }}" placeholder="Titulo, autor, editorial o ISBN">
+                <input id="q" type="text" name="q" value="{{ $search }}" placeholder="Producto, marca, proveedor o codigo">
             </div>
 
             <div class="field">
@@ -36,10 +36,10 @@
         <div class="books-grid">
             @forelse ($books as $book)
                 <article class="book-card">
-                    <div class="book-badge">{{ strtoupper(substr($book->title, 0, 1)) }}</div>
+                    <img class="product-image" src="{{ $book->imageUrl() }}" alt="{{ $book->title }}">
                     <p class="book-meta">{{ $book->author->full_name }}</p>
                     <h3>{{ $book->title }}</h3>
-                    <p class="book-summary">{{ \Illuminate\Support\Str::limit($book->summary ?? 'Sin resumen disponible.', 120) }}</p>
+                    <p class="book-summary">{{ \Illuminate\Support\Str::limit($book->summary ?? 'Sin descripcion disponible.', 120) }}</p>
                     <div class="tag-list">
                         @foreach ($book->categories->take(2) as $category)
                             <span class="tag">{{ $category->name }}</span>
@@ -52,7 +52,7 @@
                 </article>
             @empty
                 <article class="empty-state">
-                    <h3>No encontramos libros con esos filtros.</h3>
+                    <h3>No encontramos productos con esos filtros.</h3>
                     <p>Ajusta la busqueda o limpia los filtros para ver mas resultados.</p>
                 </article>
             @endforelse

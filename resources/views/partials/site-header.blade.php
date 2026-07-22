@@ -1,10 +1,10 @@
 <header class="site-header">
     <div class="topbar topbar-wide">
         <a href="{{ route('home') }}" class="brand-lockup">
-            <span class="brand-mark">BD</span>
+            <span class="brand-mark">SM</span>
             <span>
-                <span class="brand-title">Biblioteca Digital</span>
-                <span class="brand-subtitle">Catalogo, prestamos y gestion</span>
+                <span class="brand-title">Supermercado UJCV</span>
+                <span class="brand-subtitle">Catalogo, compras e inventario</span>
             </span>
         </a>
 
@@ -12,7 +12,7 @@
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'is-active' : '' }}">Inicio</a>
             <a href="{{ route('catalog.index') }}" class="nav-link {{ request()->routeIs('catalog.*') ? 'is-active' : '' }}">Catalogo</a>
             @auth
-                <a href="{{ route('loans.index') }}" class="nav-link {{ request()->routeIs('loans.*') ? 'is-active' : '' }}">Mis prestamos</a>
+                <a href="{{ route('loans.index') }}" class="nav-link {{ request()->routeIs('loans.*') ? 'is-active' : '' }}">Mis compras</a>
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}">Panel admin</a>
                 @endif

@@ -7,7 +7,7 @@
         <div class="auth-card card-surface">
             <p class="section-label">Acceso</p>
             <h1 class="page-title">Iniciar sesion</h1>
-            <p class="hero-text">Ingresa con tu correo para acceder a prestamos, historial y panel de gestion si corresponde.</p>
+            <p class="hero-text">Ingresa con tu correo para acceder a compras, historial y panel de gestion si corresponde.</p>
 
             <form method="POST" action="{{ route('login') }}" class="form-stack">
                 @csrf

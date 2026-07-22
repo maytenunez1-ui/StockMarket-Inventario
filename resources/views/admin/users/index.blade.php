@@ -18,7 +18,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Correo</th>
-                        <th>Prestamos</th>
+                        <th>Compras</th>
                         <th>Rol</th>
                         <th>Actualizar</th>
                     </tr>

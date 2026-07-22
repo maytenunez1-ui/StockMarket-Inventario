@@ -30,7 +30,7 @@ class AuthorController extends Controller
     {
         Author::create($this->validatedData($request));
 
-        return redirect()->route('admin.authors.index')->with('success', 'Autor creado correctamente.');
+        return redirect()->route('admin.authors.index')->with('success', 'Marca creada correctamente.');
     }
 
     public function edit(Author $author): View
@@ -42,7 +42,7 @@ class AuthorController extends Controller
     {
         $author->update($this->validatedData($request));
 
-        return redirect()->route('admin.authors.index')->with('success', 'Autor actualizado correctamente.');
+        return redirect()->route('admin.authors.index')->with('success', 'Marca actualizada correctamente.');
     }
 
     public function destroy(Author $author): RedirectResponse
@@ -50,10 +50,10 @@ class AuthorController extends Controller
         try {
             $author->delete();
         } catch (QueryException) {
-            return back()->with('error', 'No se puede eliminar este autor porque tiene libros asociados.');
+            return back()->with('error', 'No se puede eliminar esta marca porque tiene productos asociados.');
         }
 
-        return back()->with('success', 'Autor eliminado correctamente.');
+        return back()->with('success', 'Marca eliminada correctamente.');
     }
 
     private function validatedData(Request $request): array

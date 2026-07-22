@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Prestamos')
+@section('title', 'Compras')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
-                <p class="section-label">Prestamos</p>
-                <h1 class="page-title">Seguimiento de prestamos</h1>
+                <p class="section-label">Compras</p>
+                <h1 class="page-title">Seguimiento de compras</h1>
             </div>
         </div>
 
@@ -16,9 +16,9 @@
                 <thead>
                     <tr>
                         <th>Usuario</th>
-                        <th>Libro</th>
-                        <th>Prestamo</th>
-                        <th>Entrega</th>
+                        <th>Producto</th>
+                        <th>Compra</th>
+                        <th>Entrega estimada</th>
                         <th>Gestion</th>
                     </tr>
                 </thead>
@@ -34,8 +34,8 @@
                                     @csrf
                                     @method('PATCH')
                                     <select name="status">
-                                        @foreach (['pendiente', 'prestado', 'atrasado', 'devuelto'] as $status)
-                                            <option value="{{ $status }}" @selected($loan->status === $status)>{{ ucfirst($status) }}</option>
+                                        @foreach (['pendiente' => 'Pendiente', 'prestado' => 'En preparacion', 'atrasado' => 'Retrasada', 'devuelto' => 'Entregada'] as $status => $label)
+                                            <option value="{{ $status }}" @selected($loan->status === $status)>{{ $label }}</option>
                                         @endforeach
                                     </select>
                                     <input type="text" name="notes" value="{{ $loan->notes }}">
@@ -45,7 +45,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="empty-cell">No hay prestamos registrados.</td>
+                            <td colspan="5" class="empty-cell">No hay compras registradas.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Horchata hondurena">
+  <rect width="640" height="420" fill="#fff8ed"/>
+  <circle cx="500" cy="100" r="140" fill="#f8e3c1"/>
+  <path d="M250 78h140l24 272c2 25-18 46-43 46H269c-25 0-45-21-43-46Z" fill="#ffffff" stroke="#b77b3e" stroke-width="9"/>
+  <path d="M247 160h146l15 176H232Z" fill="#e8c894"/>
+  <rect x="270" y="36" width="100" height="48" rx="12" fill="#147342"/>
+  <text x="320" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="900" fill="#6f3f23">HORCHATA</text>
+  <path d="M279 301c29 18 55 18 82 0" fill="none" stroke="#fff7e6" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="320" cy="398" rx="125" ry="16" fill="#b77b3e" opacity=".15"/>
+</svg>

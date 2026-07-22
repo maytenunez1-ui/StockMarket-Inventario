@@ -1,24 +1,24 @@
 @extends('layouts.admin')
 
-@section('title', 'Libros')
+@section('title', 'Productos')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
                 <p class="section-label">CRUD</p>
-                <h1 class="page-title">Libros</h1>
+                <h1 class="page-title">Productos</h1>
             </div>
-            <a href="{{ route('admin.books.create') }}" class="btn btn-primary">Nuevo libro</a>
+            <a href="{{ route('admin.books.create') }}" class="btn btn-primary">Nuevo producto</a>
         </div>
 
         <div class="table-card">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Titulo</th>
-                        <th>Autor</th>
-                        <th>Editorial</th>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Proveedor</th>
                         <th>Stock</th>
                         <th>Estado</th>
                         <th>Acciones</th>
@@ -43,7 +43,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="empty-cell">No hay libros registrados.</td>
+                            <td colspan="6" class="empty-cell">No hay productos registrados.</td>
                         </tr>
                     @endforelse
                 </tbody>

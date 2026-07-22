@@ -39,7 +39,7 @@ class LoanController extends Controller
 
         if ($previousStatus === 'devuelto' && $validated['status'] !== 'devuelto') {
             if ($book->stock < 1) {
-                return back()->with('error', 'No hay stock suficiente para reabrir este prestamo.');
+                return back()->with('error', 'No hay stock suficiente para reabrir esta compra.');
             }
 
             $book->decrement('stock');
@@ -52,6 +52,6 @@ class LoanController extends Controller
 
         $loan->update($validated);
 
-        return back()->with('success', 'Prestamo actualizado correctamente.');
+        return back()->with('success', 'Compra actualizada correctamente.');
     }
 }

@@ -25,7 +25,7 @@ class LoanController extends Controller
     public function store(Request $request, Book $book): RedirectResponse
     {
         if (! $book->is_active || $book->stock < 1) {
-            return back()->with('error', 'Este libro no se encuentra disponible en este momento.');
+            return back()->with('error', 'Este producto no se encuentra disponible en este momento.');
         }
 
         $alreadyBorrowed = $request->user()
@@ -35,22 +35,22 @@ class LoanController extends Controller
             ->exists();
 
         if ($alreadyBorrowed) {
-            return back()->with('error', 'Ya tienes un prestamo activo para este libro.');
+            return back()->with('error', 'Ya tienes una compra pendiente para este producto.');
         }
 
         Loan::create([
             'book_id' => $book->id,
             'user_id' => $request->user()->id,
             'loan_date' => Carbon::today(),
-            'due_date' => Carbon::today()->addDays(14),
+            'due_date' => Carbon::today()->addDays(2),
             'status' => 'prestado',
-            'notes' => 'Prestamo solicitado desde el catalogo.',
+            'notes' => 'Compra solicitada desde el catalogo.',
         ]);
 
         $book->decrement('stock');
 
         return redirect()
             ->route('loans.index')
-            ->with('success', 'Prestamo registrado. Puedes revisar el estado en Mis prestamos.');
+            ->with('success', 'Compra registrada. Puedes revisar el estado en Mis compras.');
     }
 }

@@ -46,7 +46,7 @@ class BookController extends Controller
         $book = Book::create($validated);
         $book->categories()->sync($categories);
 
-        return redirect()->route('admin.books.index')->with('success', 'Libro creado correctamente.');
+        return redirect()->route('admin.books.index')->with('success', 'Producto creado correctamente.');
     }
 
     public function edit(Book $book): View
@@ -72,7 +72,7 @@ class BookController extends Controller
         $book->update($validated);
         $book->categories()->sync($categories);
 
-        return redirect()->route('admin.books.index')->with('success', 'Libro actualizado correctamente.');
+        return redirect()->route('admin.books.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     public function destroy(Book $book): RedirectResponse
@@ -80,10 +80,10 @@ class BookController extends Controller
         try {
             $book->delete();
         } catch (QueryException) {
-            return back()->with('error', 'No se puede eliminar este libro porque tiene prestamos asociados.');
+            return back()->with('error', 'No se puede eliminar este producto porque tiene compras asociadas.');
         }
 
-        return back()->with('success', 'Libro eliminado correctamente.');
+        return back()->with('success', 'Producto eliminado correctamente.');
     }
 
     private function validatedData(Request $request, ?Book $book = null): array
@@ -110,7 +110,7 @@ class BookController extends Controller
     private function makeUniqueSlug(string $title, ?Book $book = null): string
     {
         $baseSlug = Str::slug($title);
-        $baseSlug = $baseSlug !== '' ? $baseSlug : 'libro';
+        $baseSlug = $baseSlug !== '' ? $baseSlug : 'producto';
         $slug = $baseSlug;
         $counter = 1;
 

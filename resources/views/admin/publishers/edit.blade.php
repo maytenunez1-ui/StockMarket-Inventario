@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Editar editorial')
+@section('title', 'Editar proveedor')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
-                <p class="section-label">Editoriales</p>
-                <h1 class="page-title">Editar editorial</h1>
+                <p class="section-label">Proveedores</p>
+                <h1 class="page-title">Editar proveedor</h1>
             </div>
         </div>
 

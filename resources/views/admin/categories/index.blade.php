@@ -18,7 +18,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Slug</th>
-                        <th>Libros</th>
+                        <th>Productos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

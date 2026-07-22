@@ -34,7 +34,7 @@ class PublisherController extends Controller
 
         Publisher::create($validated);
 
-        return redirect()->route('admin.publishers.index')->with('success', 'Editorial creada correctamente.');
+        return redirect()->route('admin.publishers.index')->with('success', 'Proveedor creado correctamente.');
     }
 
     public function edit(Publisher $publisher): View
@@ -49,7 +49,7 @@ class PublisherController extends Controller
 
         $publisher->update($validated);
 
-        return redirect()->route('admin.publishers.index')->with('success', 'Editorial actualizada correctamente.');
+        return redirect()->route('admin.publishers.index')->with('success', 'Proveedor actualizado correctamente.');
     }
 
     public function destroy(Publisher $publisher): RedirectResponse
@@ -57,10 +57,10 @@ class PublisherController extends Controller
         try {
             $publisher->delete();
         } catch (QueryException) {
-            return back()->with('error', 'No se puede eliminar esta editorial porque tiene libros asociados.');
+            return back()->with('error', 'No se puede eliminar este proveedor porque tiene productos asociados.');
         }
 
-        return back()->with('success', 'Editorial eliminada correctamente.');
+        return back()->with('success', 'Proveedor eliminado correctamente.');
     }
 
     private function validatedData(Request $request): array
@@ -75,7 +75,7 @@ class PublisherController extends Controller
     private function makeUniqueSlug(string $name, ?Publisher $publisher = null): string
     {
         $baseSlug = Str::slug($name);
-        $baseSlug = $baseSlug !== '' ? $baseSlug : 'editorial';
+        $baseSlug = $baseSlug !== '' ? $baseSlug : 'proveedor';
         $slug = $baseSlug;
         $counter = 1;
 

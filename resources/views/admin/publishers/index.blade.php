@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
-@section('title', 'Editoriales')
+@section('title', 'Proveedores')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
                 <p class="section-label">CRUD</p>
-                <h1 class="page-title">Editoriales</h1>
+                <h1 class="page-title">Proveedores</h1>
             </div>
-            <a href="{{ route('admin.publishers.create') }}" class="btn btn-primary">Nueva editorial</a>
+            <a href="{{ route('admin.publishers.create') }}" class="btn btn-primary">Nuevo proveedor</a>
         </div>
 
         <div class="table-card">
@@ -18,7 +18,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Pais</th>
-                        <th>Libros</th>
+                        <th>Productos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -39,7 +39,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="empty-cell">No hay editoriales registradas.</td>
+                            <td colspan="4" class="empty-cell">No hay proveedores registrados.</td>
                         </tr>
                     @endforelse
                 </tbody>

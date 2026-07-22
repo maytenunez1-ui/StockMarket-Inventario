@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Banano premium">
+  <rect width="640" height="420" fill="#effaf0"/>
+  <circle cx="520" cy="90" r="150" fill="#dff5e8"/>
+  <circle cx="115" cy="330" r="110" fill="#fff4c2"/>
+  <path d="M126 231c121 74 276 84 405-62-69 130-223 215-393 144-30-13-42-62-12-82Z" fill="#f6c945"/>
+  <path d="M143 257c98 49 235 48 352-41-63 98-203 151-339 95-23-9-31-40-13-54Z" fill="#f4b731"/>
+  <path d="M500 167c19-8 38-7 53 2-15 17-31 27-52 27Z" fill="#6f4b24"/>
+  <path d="M127 230c-19-10-39-9-55 2 16 17 34 27 55 26Z" fill="#6f4b24"/>
+  <ellipse cx="326" cy="340" rx="172" ry="22" fill="#b9d93a" opacity=".22"/>
+</svg>

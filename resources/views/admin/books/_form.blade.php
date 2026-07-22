@@ -1,13 +1,13 @@
 <div class="form-grid">
     <div class="field">
-        <label for="title">Titulo</label>
+        <label for="title">Producto</label>
         <input id="title" type="text" name="title" value="{{ old('title', $book->title ?? '') }}" required>
     </div>
 
     <div class="field">
-        <label for="author_id">Autor</label>
+        <label for="author_id">Marca</label>
         <select id="author_id" name="author_id" required>
-            <option value="">Selecciona un autor</option>
+            <option value="">Selecciona una marca</option>
             @foreach ($authors as $author)
                 <option value="{{ $author->id }}" @selected((string) old('author_id', $book->author_id ?? '') === (string) $author->id)>{{ $author->full_name }}</option>
             @endforeach
@@ -15,9 +15,9 @@
     </div>
 
     <div class="field">
-        <label for="publisher_id">Editorial</label>
+        <label for="publisher_id">Proveedor</label>
         <select id="publisher_id" name="publisher_id">
-            <option value="">Sin editorial</option>
+            <option value="">Sin proveedor</option>
             @foreach ($publishers as $publisher)
                 <option value="{{ $publisher->id }}" @selected((string) old('publisher_id', $book->publisher_id ?? '') === (string) $publisher->id)>{{ $publisher->name }}</option>
             @endforeach
@@ -25,19 +25,19 @@
     </div>
 
     <div class="field">
-        <label for="isbn">ISBN</label>
+        <label for="isbn">Codigo</label>
         <input id="isbn" type="text" name="isbn" value="{{ old('isbn', $book->isbn ?? '') }}">
     </div>
 
     <div class="field">
-        <label for="publication_year">Ano de publicacion</label>
+        <label for="publication_year">Ano de ingreso</label>
         <input id="publication_year" type="number" name="publication_year" value="{{ old('publication_year', $book->publication_year ?? '') }}">
     </div>
 
     <div class="field">
-        <label for="format">Formato</label>
+        <label for="format">Presentacion</label>
         <select id="format" name="format" required>
-            @foreach (['fisico' => 'Fisico', 'digital' => 'Digital', 'hibrido' => 'Hibrido'] as $value => $label)
+            @foreach (['fisico' => 'Unidad', 'digital' => 'Caja', 'hibrido' => 'Paquete'] as $value => $label)
                 <option value="{{ $value }}" @selected(old('format', $book->format ?? 'hibrido') === $value)>{{ $label }}</option>
             @endforeach
         </select>
@@ -50,7 +50,7 @@
 </div>
 
 <div class="field">
-    <label for="summary">Resumen</label>
+    <label for="summary">Descripcion</label>
     <textarea id="summary" name="summary" rows="6">{{ old('summary', $book->summary ?? '') }}</textarea>
 </div>
 
@@ -71,10 +71,10 @@
 
 <label class="checkbox-row">
     <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $book->is_active ?? true))>
-    <span>Libro visible en el catalogo publico</span>
+    <span>Producto visible en el catalogo publico</span>
 </label>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Guardar libro</button>
+    <button type="submit" class="btn btn-primary">Guardar producto</button>
     <a href="{{ route('admin.books.index') }}" class="btn btn-secondary">Cancelar</a>
 </div>

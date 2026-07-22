@@ -7,7 +7,7 @@
         <div class="auth-card card-surface">
             <p class="section-label">Registro</p>
             <h1 class="page-title">Crear cuenta</h1>
-            <p class="hero-text">Registrate para solicitar prestamos y seguir tu historial dentro de la biblioteca.</p>
+            <p class="hero-text">Registrate para comprar productos y seguir tu historial dentro del supermercado.</p>
 
             <form method="POST" action="{{ route('register') }}" class="form-stack">
                 @csrf

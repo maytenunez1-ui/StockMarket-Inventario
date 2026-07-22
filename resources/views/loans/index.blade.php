@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Mis prestamos')
+@section('title', 'Mis compras')
 
 @section('content')
     <section class="section-block">
         <div class="section-heading">
             <div>
                 <p class="section-label">Mi actividad</p>
-                <h1 class="page-title">Mis prestamos</h1>
+                <h1 class="page-title">Mis compras</h1>
             </div>
             <a href="{{ route('catalog.index') }}" class="btn btn-secondary">Seguir explorando</a>
         </div>
@@ -16,10 +16,10 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Libro</th>
-                        <th>Autor</th>
-                        <th>Prestamo</th>
-                        <th>Entrega</th>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Compra</th>
+                        <th>Entrega estimada</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
@@ -30,11 +30,11 @@
                             <td>{{ $loan->book->author->full_name }}</td>
                             <td>{{ $loan->loan_date->format('d/m/Y') }}</td>
                             <td>{{ $loan->due_date->format('d/m/Y') }}</td>
-                            <td><span class="status-chip">{{ ucfirst($loan->status) }}</span></td>
+                            <td><span class="status-chip">{{ ['pendiente' => 'Pendiente', 'prestado' => 'En preparacion', 'atrasado' => 'Retrasada', 'devuelto' => 'Entregada'][$loan->status] ?? ucfirst($loan->status) }}</span></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="empty-cell">Todavia no tienes prestamos registrados.</td>
+                            <td colspan="5" class="empty-cell">Todavia no tienes compras registradas.</td>
                         </tr>
                     @endforelse
                 </tbody>

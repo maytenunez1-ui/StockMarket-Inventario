@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Rosquillas hondurenas">
+  <rect width="640" height="420" fill="#fffaf0"/>
+  <circle cx="126" cy="105" r="118" fill="#ffe9b8"/>
+  <g fill="#d99c38" stroke="#9b641f" stroke-width="8">
+    <path d="M225 192a62 62 0 1 0 1 0Zm31 0a31 31 0 1 1-1 0Z" fill-rule="evenodd"/>
+    <path d="M338 174a62 62 0 1 0 1 0Zm31 0a31 31 0 1 1-1 0Z" fill-rule="evenodd"/>
+    <path d="M292 275a62 62 0 1 0 1 0Zm31 0a31 31 0 1 1-1 0Z" fill-rule="evenodd"/>
+  </g>
+  <text x="320" y="91" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#147342">ROSQUILLAS</text>
+  <ellipse cx="320" cy="365" rx="165" ry="22" fill="#9b641f" opacity=".14"/>
+</svg>

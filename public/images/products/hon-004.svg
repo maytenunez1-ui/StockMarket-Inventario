@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Queso seco hondureno">
+  <rect width="640" height="420" fill="#fffaf0"/>
+  <circle cx="125" cy="110" r="118" fill="#fff0b8"/>
+  <path d="M190 245 414 122c42 42 50 110 18 174L234 346c-43-18-60-61-44-101Z" fill="#f5d35c" stroke="#c79a24" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M414 122 432 296 234 346c37-62 22-123-44-101Z" fill="#e7bd37"/>
+  <circle cx="300" cy="236" r="18" fill="#fff8d4" opacity=".85"/>
+  <circle cx="363" cy="203" r="14" fill="#fff8d4" opacity=".85"/>
+  <circle cx="344" cy="289" r="16" fill="#fff8d4" opacity=".85"/>
+  <text x="320" y="83" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#147342">QUESO SECO</text>
+  <ellipse cx="320" cy="365" rx="150" ry="18" fill="#c79a24" opacity=".18"/>
+</svg>

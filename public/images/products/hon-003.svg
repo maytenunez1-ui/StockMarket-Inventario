@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Mantequilla crema hondurena">
+  <rect width="640" height="420" fill="#fffbea"/>
+  <circle cx="505" cy="110" r="140" fill="#f4c430" opacity=".22"/>
+  <rect x="205" y="118" width="230" height="185" rx="34" fill="#ffffff" stroke="#2377c8" stroke-width="9"/>
+  <path d="M228 118h184v-36H228Z" fill="#2377c8"/>
+  <path d="M232 202c48-36 122-35 176 0v64H232Z" fill="#fff0a8"/>
+  <text x="320" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="800" fill="#2377c8">CREMA</text>
+  <text x="320" y="284" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="800" fill="#147342">HONDURENA</text>
+  <ellipse cx="320" cy="334" rx="137" ry="18" fill="#2377c8" opacity=".15"/>
+</svg>

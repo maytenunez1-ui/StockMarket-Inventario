@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Book extends Model
 {
@@ -54,5 +55,17 @@ class Book extends Model
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function imageUrl(): string
+    {
+        $code = $this->isbn ? Str::lower($this->isbn) : Str::slug($this->title);
+        $path = "images/products/{$code}.svg";
+
+        if (! file_exists(public_path($path))) {
+            $path = 'images/products/default.svg';
+        }
+
+        return asset($path);
     }
 }
