@@ -1,6 +1,6 @@
 # 🗄️ Diseño de Base de Datos - StockMarket-Inventario
 
-Este documento define las 6 tablas principales del sistema organizadas bajo el patrón **Database per Service**, cumpliendo con normalización en **3FN**, integridad referencial y claves primarias/foráneas[cite: 1].
+Este documento define las 6 tablas principales del sistema organizadas bajo el patrón **Database per Service**, cumpliendo con normalización en **3FN**, integridad referencial y claves primarias/foráneas.
 
 ---
 
@@ -123,3 +123,4 @@ CREATE TABLE detalle_ordenes (
     precio_unitario DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (orden_id) REFERENCES ordenes_compra(id) ON DELETE CASCADE
 );
+
