@@ -64,7 +64,7 @@ erDiagram
     PROVEEDORES ||--o{ ORDENES_COMPRA : emite
     ORDENES_COMPRA ||--|{ DETALLE_ORDENES : contiene
     PRODUCTOS ||--|{ DETALLE_ORDENES : incluye
-
+```
 
 -- BD 1: MS-Auth
 CREATE TABLE usuarios (
