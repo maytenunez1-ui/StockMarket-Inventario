@@ -66,7 +66,6 @@ erDiagram
     PRODUCTOS ||--|{ DETALLE_ORDENES : incluye
 
 
-
 -- BD 1: MS-Auth
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
