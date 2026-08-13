@@ -1,4 +1,65 @@
 # 🗄️ Diseño de Base de Datos - StockMarket-Inventario
+## 📐 Diagrama Entidad-Relación
+
+```mermaid
+erDiagram
+    USUARIOS {
+        int id PK
+        string nombre
+        string email UK
+        string password
+        string rol
+    }
+
+    CATEGORIAS {
+        int id PK
+        string nombre
+        string descripcion
+    }
+
+    PRODUCTOS {
+        int id PK
+        string codigo_barras UK
+        string nombre
+        decimal precio
+        int categoria_id FK
+    }
+
+    PROVEEDORES {
+        int id PK
+        string rtn UK
+        string nombre_empresa
+        string telefono
+    }
+
+    INVENTARIO {
+        int id PK
+        int producto_id FK
+        int stock_actual
+        string ubicacion_bodega
+    }
+
+    ORDENES_COMPRA {
+        int id PK
+        int proveedor_id FK
+        date fecha_emision
+        decimal total
+    }
+
+    DETALLE_ORDENES {
+        int id PK
+        int orden_id FK
+        int producto_id FK
+        int cantidad
+        decimal precio_unitario
+    }
+
+    CATEGORIAS ||--o{ PRODUCTOS : "1 a N"
+    PRODUCTOS ||--o{ INVENTARIO : "1 a N"
+    PROVEEDORES ||--o{ ORDENES_COMPRA : "1 a N"
+    ORDENES_COMPRA ||--{ DETALLE_ORDENES : "contiene (N:M)"
+    PRODUCTOS ||--{ DETALLE_ORDENES : "pertenece a (N:M)"
+```
 
 Este documento define las 6 tablas principales del sistema organizadas bajo el patrón **Database per Service**, cumpliendo con normalización en **3FN**, integridad referencial y las relaciones 1:N y N:M exigidas.
 
