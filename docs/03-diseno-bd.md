@@ -54,12 +54,11 @@ erDiagram
         decimal precio_unitario
     }
 
-    CATEGORIAS ||--o{ PRODUCTOS : "1 a N"
-    PRODUCTOS ||--o{ INVENTARIO : "1 a N"
-    PROVEEDORES ||--o{ ORDENES_COMPRA : "1 a N"
-    ORDENES_COMPRA ||--{ DETALLE_ORDENES : "contiene (N:M)"
-    PRODUCTOS ||--{ DETALLE_ORDENES : "pertenece a (N:M)"
-```
+    CATEGORIAS ||--o{ PRODUCTOS : "posee"
+    PRODUCTOS ||--o{ INVENTARIO : "tiene"
+    PROVEEDORES ||--o{ ORDENES_COMPRA : "emite"
+    ORDENES_COMPRA ||--|{ DETALLE_ORDENES : "contiene"
+    PRODUCTOS ||--|{ DETALLE_ORDENES : "incluye"
 
 Este documento define las 6 tablas principales del sistema organizadas bajo el patrón **Database per Service**, cumpliendo con normalización en **3FN**, integridad referencial y las relaciones 1:N y N:M exigidas.
 
