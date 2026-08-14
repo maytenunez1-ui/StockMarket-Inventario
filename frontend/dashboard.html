@@ -1,270 +1,97 @@
-<script>
-    // Todas las llamadas pasan por el mismo dominio, lo que permite desplegar
-    // el frontend y las API detrás de Nginx sin exponer puertos internos.
-    const fetchOriginal = window.fetch.bind(window);
-    window.fetch = (input, init = {}) => {
-        const destino = String(input);
-        const tokenActual = localStorage.getItem('token');
-        const headers = { ...(init.headers || {}) };
-        if (destino.startsWith('/api/') && tokenActual) {
-            headers.Authorization = `Bearer ${tokenActual}`;
-        }
-        return fetchOriginal(input, { ...init, headers });
-    };
-    const token = localStorage.getItem('token');
-    const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-    if (!token || !usuario) {
-        window.location.href = 'index.html';
-    } else {
-        document.getElementById('bienvenida').innerText = `¡Hola, ${usuario.nombre}! 👋`;
-        document.getElementById('badge').innerText = `ROL: ${usuario.rol.toUpperCase()}`;
-        
-        // Asignar fecha actual al input date
-        const hoy = new Date().toISOString().split('T')[0];
-        document.getElementById('fecha_emision').value = hoy;
-        
-        cargarTodo();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockMarket | Panel de control</title>
+  <style>
+    :root { --navy:#10233f; --blue:#2563eb; --sky:#eaf2ff; --ink:#172033; --muted:#64748b; --line:#e5eaf2; --green:#059669; --red:#dc2626; --amber:#d97706; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#f6f8fc; font:15px/1.45 Inter,Segoe UI,Arial,sans-serif; }
+    .shell { display:grid; grid-template-columns:255px 1fr; min-height:100vh; }
+    aside { background:var(--navy); color:#dbeafe; padding:26px 16px; display:flex; flex-direction:column; }
+    .brand { display:flex; gap:11px; align-items:center; padding:0 12px 30px; font-size:20px; font-weight:800; color:#fff; }
+    .brand span { display:grid; place-items:center; width:35px; height:35px; border-radius:10px; background:#3b82f6; }
+    .nav-label { padding:0 12px; font-size:11px; letter-spacing:.08em; color:#94a3b8; font-weight:700; text-transform:uppercase; }
+    .nav-btn { width:100%; margin:5px 0; padding:12px; border:0; border-radius:9px; color:#cbd5e1; background:transparent; font:inherit; text-align:left; cursor:pointer; }
+    .nav-btn:hover,.nav-btn.active { background:#1e3a5f; color:#fff; }
+    .profile { margin-top:auto; padding:16px 12px 0; border-top:1px solid #284565; color:#fff; }
+    .profile small { display:block; color:#9fb3ce; } .logout { margin-top:12px; color:#bfdbfe; background:none; border:0; padding:0; cursor:pointer; font:inherit; }
+    main { min-width:0; padding:28px 34px; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+    h1 { margin:0; font-size:25px; } h2 { margin:0 0 6px; font-size:20px; } p { margin:0; color:var(--muted); }
+    .badge { padding:8px 11px; background:#dbeafe; color:#1d4ed8; border-radius:999px; font-size:12px; font-weight:700; }
+    .section { display:none; } .section.active { display:block; }
+    .cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:24px 0; }
+    .card,.panel { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 2px 8px #1e293b08; }
+    .card { padding:18px; } .card .icon { float:right; font-size:22px; } .card small { color:var(--muted); font-weight:600; } .metric { font-size:28px; font-weight:800; margin-top:6px; } .ops { background:linear-gradient(110deg,#102a43,#175a76); color:#fff; padding:24px; display:flex; justify-content:space-between; gap:24px; align-items:center; overflow:hidden; position:relative; } .ops:after{content:"";position:absolute;width:210px;height:210px;border:1px solid #ffffff28;border-radius:50%;right:-65px;top:-85px}.ops h2,.ops p{position:relative;z-index:1}.ops p{color:#d5e9f3;max-width:580px}.ops-state{position:relative;z-index:1;background:#ffffff16;border:1px solid #ffffff2e;border-radius:12px;padding:14px;min-width:190px}.ops-state b{display:block;color:#86efac;margin-bottom:5px}
+    .panel { padding:22px; margin-bottom:20px; overflow:auto; } .panel-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    table { width:100%; border-collapse:collapse; min-width:530px; } th { text-align:left; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:.04em; } th,td { border-bottom:1px solid var(--line); padding:13px 8px; }
+    tr:last-child td { border:0; } .status { padding:5px 9px; border-radius:999px; font-size:12px; font-weight:700; } .ok { color:#047857; background:#d1fae5; } .low { color:#b45309; background:#fef3c7; }
+    .two-col { display:grid; grid-template-columns:1.25fr .75fr; gap:20px; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; } .form-grid .wide { grid-column:1/-1; }
+    label { display:block; color:#475569; font-size:13px; font-weight:650; margin-bottom:5px; }
+    input { width:100%; padding:10px 11px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; outline-color:var(--blue); }
+    .btn { border:0; border-radius:8px; padding:11px 15px; background:var(--blue); color:#fff; font:inherit; font-weight:700; cursor:pointer; } .btn:hover{background:#1d4ed8}.btn.secondary{background:#eef2ff;color:#3730a3}
+    .empty { padding:22px; text-align:center; color:var(--muted); } .message { margin-top:12px; font-weight:650; } .error{color:var(--red)} .success{color:var(--green)}
+    @media(max-width:900px){.shell{grid-template-columns:1fr} aside{padding:12px;position:sticky;top:0;z-index:2}.brand{padding:0 6px 8px}.nav-label,.profile{display:none}.nav-btn{display:inline-block;width:auto;margin:2px;padding:8px}main{padding:22px}.cards{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}} @media(max-width:520px){.cards,.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}header{align-items:flex-start;gap:12px;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span>🛒</span> StockMarket</div>
+      <div class="nav-label">Administración</div>
+      <button class="nav-btn active" data-view="inicio">▦ &nbsp; Resumen</button>
+      <button class="nav-btn" data-view="productos">◈ &nbsp; Productos</button>
+      <button class="nav-btn" data-view="clientes">♧ &nbsp; Clientes</button>
+      <button class="nav-btn" data-view="pedidos">🛵 &nbsp; Pedidos delivery</button>
+      <button class="nav-btn" data-view="inventario">▤ &nbsp; Inventario</button>
+      <button class="nav-btn" data-view="proveedores">♙ &nbsp; Proveedores</button>
+      <button class="nav-btn" data-view="ordenes">▣ &nbsp; Órdenes de compra</button>
+      <div class="profile"><strong id="usuarioNombre">Administrador</strong><small id="usuarioRol">ROL: ADMIN</small><button class="logout" id="cerrarSesion">↪ Cerrar sesión</button></div>
+    </aside>
+    <main>
+      <header><div><h1 id="tituloVista">Resumen del inventario</h1><p id="saludo">Controla el estado de tu supermercado en tiempo real.</p></div><span class="badge" id="fechaActual"></span></header>
+      <section class="section active" id="inicio">
+        <div class="panel ops"><div><div class="nav-label" style="padding:0;color:#93c5fd">CENTRO DE OPERACIONES</div><h2>Todo el negocio, bajo control.</h2><p>Supervisa inventario, pedidos de compra y entregas a domicilio desde un mismo centro administrativo.</p></div><div class="ops-state"><b>● Sistema operativo</b><small>Catálogo, delivery y base de datos conectados</small></div></div>
+        <div class="cards"><div class="card"><span class="icon">📦</span><small>Productos registrados</small><div class="metric" id="metricProductos">—</div></div><div class="card"><span class="icon">🏪</span><small>Proveedores activos</small><div class="metric" id="metricProveedores">—</div></div><div class="card"><span class="icon">🛵</span><small>Pedidos delivery</small><div class="metric" id="metricPedidos">—</div></div><div class="card"><span class="icon">⚠️</span><small>Alertas de stock</small><div class="metric" id="metricAlertas">—</div></div></div>
+        <div class="panel"><div class="panel-title"><div><h2>Alertas de inventario</h2><p>Productos que requieren seguimiento.</p></div><button class="btn secondary" data-go="inventario">Ver inventario</button></div><table><thead><tr><th>Producto</th><th>Existencia</th><th>Bodega</th><th>Estado</th></tr></thead><tbody id="tablaAlertas"></tbody></table></div>
+      </section>
+      <section class="section" id="productos"><div class="two-col"><div class="panel"><div class="panel-title"><div><h2>Catálogo de productos</h2><p>Productos que verá el cliente en la tienda.</p></div><button class="btn" data-refresh="productos">Actualizar</button></div><table><thead><tr><th>ID</th><th>Producto</th><th>Código</th><th>Precio</th><th>Categoría</th></tr></thead><tbody id="tablaProductos"></tbody></table></div><div class="panel"><h2>Agregar producto</h2><p style="margin-bottom:16px">La imagen se muestra en la tienda del cliente.</p><form id="formProducto"><div class="form-grid"><div class="wide"><label>Nombre</label><input id="p_nombre" required placeholder="Ej. Café molido"></div><div><label>Precio (L)</label><input id="p_precio" type="number" step="0.01" required></div><div><label>Código</label><input id="p_codigo" required></div><div><label>Existencia inicial</label><input id="p_stock" type="number" min="0" value="0" required></div><div><label>Categoría (ID)</label><input id="p_categoria" type="number" value="1"></div><div class="wide"><label>URL de imagen</label><input id="p_imagen" type="url" placeholder="https://…"></div><div class="wide"><label>Descripción</label><input id="p_descripcion" placeholder="Descripción corta para clientes"></div><div class="wide"><button class="btn">Publicar producto</button></div></div></form><div id="mensajeProducto" class="message"></div></div></div></section>
+      <section class="section" id="clientes"><div class="panel"><div class="panel-title"><div><h2>Clientes registrados</h2><p>Perfiles creados al realizar compras.</p></div><button class="btn" data-refresh="clientes">Actualizar</button></div><table><thead><tr><th>ID</th><th>Cliente</th><th>Correo</th><th>Teléfono</th><th>Dirección</th></tr></thead><tbody id="tablaClientes"></tbody></table></div></section>
+      <section class="section" id="pedidos"><div class="panel"><div class="panel-title"><div><h2>Pedidos de delivery</h2><p>Gestiona la preparación y entrega de compras.</p></div><button class="btn" data-refresh="pedidos">Actualizar</button></div><table><thead><tr><th>#</th><th>Cliente</th><th>Entrega</th><th>Total</th><th>Pago</th><th>Estado</th></tr></thead><tbody id="tablaPedidos"></tbody></table></div></section>
+      <section class="section" id="inventario"><div class="panel"><div class="panel-title"><div><h2>Control de inventario</h2><p>Existencias por producto y ubicación.</p></div><button class="btn" data-refresh="inventario">Actualizar</button></div><table><thead><tr><th>ID</th><th>Producto</th><th>Existencia</th><th>Ubicación</th><th>Estado</th></tr></thead><tbody id="tablaInventario"></tbody></table></div></section>
+      <section class="section" id="proveedores"><div class="panel"><div class="panel-title"><div><h2>Proveedores</h2><p>Directorio de empresas proveedoras.</p></div><button class="btn" data-refresh="proveedores">Actualizar</button></div><table><thead><tr><th>ID</th><th>Nombre</th><th>Contacto</th></tr></thead><tbody id="tablaProveedores"></tbody></table></div></section>
+      <section class="section" id="ordenes"><div class="two-col"><div class="panel"><div class="panel-title"><div><h2>Órdenes de compra</h2><p>Historial de compras registradas.</p></div><button class="btn secondary" data-refresh="ordenes">Actualizar</button></div><table><thead><tr><th>ID</th><th>Proveedor</th><th>Producto</th><th>Total</th><th>Fecha</th></tr></thead><tbody id="tablaOrdenes"></tbody></table></div><div class="panel"><h2>Nueva orden</h2><p style="margin-bottom:16px">Registra una compra de inventario.</p><form id="formOrden"><div class="form-grid"><div><label for="proveedor_id">ID proveedor</label><input id="proveedor_id" type="number" min="1" required></div><div><label for="producto_id">ID producto</label><input id="producto_id" type="number" min="1" required></div><div><label for="monto_total">Monto total ($)</label><input id="monto_total" type="number" step="0.01" min="0" required></div><div><label for="fecha_emision">Fecha</label><input id="fecha_emision" type="date" required></div><div class="wide"><button class="btn" type="submit">Guardar orden</button></div></div></form><div id="mensajeOrden" class="message"></div></div></div></section>
+    </main>
+  </div>
+  <script>
+    const token = localStorage.getItem('token'); const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+    if (!token || !usuario) location.href = 'index.html'; if(usuario.rol!=='admin') location.href='cliente.html';
+    const api = async (url, options={}) => fetch(url,{...options,headers:{...options.headers,Authorization:`Bearer ${token}`}});
+    const state = { productos:[], inventario:[], proveedores:[], ordenes:[], clientes:[], pedidos:[] };
+    const esc = value => String(value ?? '—').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+    const tbody = (id, html, colspan) => document.getElementById(id).innerHTML = html || `<tr><td colspan="${colspan}" class="empty">No hay registros disponibles.</td></tr>`;
+    async function load(name,url){ try { const r=await api(url); if(!r.ok) throw new Error(); state[name]=await r.json(); } catch { state[name]=[]; } }
+    function render(){
+      const low=state.inventario.filter(x=>(x.stock_actual||0)<=5);
+      document.getElementById('metricProductos').textContent=state.productos.length; document.getElementById('metricProveedores').textContent=state.proveedores.length; document.getElementById('metricPedidos').textContent=state.pedidos.length; document.getElementById('metricAlertas').textContent=low.length;
+      tbody('tablaAlertas',low.map(x=>`<tr><td>#${x.producto_id}</td><td>${x.stock_actual}</td><td>${esc(x.ubicacion_bodega)}</td><td><span class="status low">Stock bajo</span></td></tr>`).join(''),4);
+      tbody('tablaProductos',state.productos.map(x=>`<tr><td>#${x.id}</td><td><strong>${esc(x.nombre)}</strong></td><td>${esc(x.codigo_barras)}</td><td>$${Number(x.precio||0).toFixed(2)}</td><td>${esc(x.categoria_id)}</td></tr>`).join(''),5);
+      tbody('tablaInventario',state.inventario.map(x=>{const low=x.stock_actual<=5;return `<tr><td>#${x.id}</td><td>#${x.producto_id}</td><td><strong>${x.stock_actual}</strong></td><td>${esc(x.ubicacion_bodega)}</td><td><span class="status ${low?'low':'ok'}">${low?'Stock bajo':'Disponible'}</span></td></tr>`}).join(''),5);
+      tbody('tablaProveedores',state.proveedores.map(x=>`<tr><td>#${x.id}</td><td><strong>${esc(x.nombre)}</strong></td><td>${esc(x.contacto)}</td></tr>`).join(''),3);
+      tbody('tablaOrdenes',state.ordenes.map(x=>`<tr><td>#${x.id}</td><td>#${x.proveedor_id}</td><td>#${x.producto_id}</td><td>$${Number(x.monto_total||0).toFixed(2)}</td><td>${x.fecha_emision?new Date(x.fecha_emision).toLocaleDateString('es-HN'):'—'}</td></tr>`).join(''),5);
+      tbody('tablaClientes',state.clientes.map(x=>`<tr><td>#${x.id}</td><td><strong>${esc(x.nombre)}</strong></td><td>${esc(x.email)}</td><td>${esc(x.telefono)}</td><td>${esc(x.direccion)}</td></tr>`).join(''),5);
+      tbody('tablaPedidos',state.pedidos.map(x=>`<tr><td>#${x.id}</td><td><strong>${esc(x.cliente_nombre)}</strong><br><small>${esc(x.cliente_email)}</small></td><td>${esc(x.direccion_entrega)}</td><td>L ${Number(x.total||0).toFixed(2)}</td><td>${esc(x.metodo_pago)}</td><td><select onchange="estadoPedido(${x.id},this.value)"><option ${x.estado==='Pendiente'?'selected':''}>Pendiente</option><option ${x.estado==='En preparación'?'selected':''}>En preparación</option><option ${x.estado==='En camino'?'selected':''}>En camino</option><option ${x.estado==='Entregado'?'selected':''}>Entregado</option><option ${x.estado==='Cancelado'?'selected':''}>Cancelado</option></select></td></tr>`).join(''),6);
     }
-
-    // Navegación entre las vistas
-    function verPantalla(id, btn) {
-        document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`pantalla-${id}`).classList.add('activa');
-        btn.classList.add('active');
-    }
-
-    async function cargarTodo() {
-        cargarDashboard();
-        cargarProductos();
-        cargarCategorias();
-        cargarProveedores();
-        cargarOrdenes();
-    }
-
-    // 1. Dashboard Stock (ms-inventario :3003) con Multi-Endpoint Fallback
-    async function cargarDashboard() {
-        const tabla = document.getElementById('tablaAlertas');
-        const rutasInventario = [
-            '/api/inventario/inventario',
-            '/api/inventario/inventarios',
-            '/api/inventario/stock',
-            '/api/inventario/alertas'
-        ];
-
-        let items = null;
-
-        for (const url of rutasInventario) {
-            try {
-                const res = await fetch(url);
-                if (res.ok) {
-                    items = await res.json();
-                    break;
-                }
-            } catch (e) {
-                // Intentar con la siguiente ruta
-            }
-        }
-
-        if (items && Array.isArray(items)) {
-            if (items.length === 0) {
-                tabla.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay registros de inventario.</td></tr>';
-                return;
-            }
-            tabla.innerHTML = items.map(i => {
-                const stockAct = i.stock_actual ?? i.cantidad ?? i.stock ?? 0;
-                const stockMin = i.stock_minimo ?? i.minimo ?? 5;
-                const esBajo = stockAct <= stockMin;
-
-                return `
-                    <tr>
-                        <td>#${i.producto_id || i.id}</td>
-                        <td><strong>${stockAct}</strong></td>
-                        <td>${stockMin}</td>
-                        <td>
-                            <span style="color:${esBajo ? '#f38ba8' : '#a6e3a1'}; font-weight: bold;">
-                                ${esBajo ? '⚠️ Bajo Stock' : '✅ Stock Normal'}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        } else {
-            tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">No se pudo conectar con ms-inventario (:3003). Revisa que el servicio esté corriendo.</td></tr>';
-        }
-    }
-
-    // 2. Productos (ms-productos :3002)
-    async function cargarProductos() {
-        const tabla = document.getElementById('tablaProductos');
-        try {
-            const res = await fetch('/api/productos/productos');
-            if (res.ok) {
-                const prods = await res.json();
-                if (prods.length === 0) {
-                    tabla.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay productos registrados.</td></tr>';
-                    return;
-                }
-                tabla.innerHTML = prods.map(p => `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td><strong>${p.nombre}</strong></td>
-                        <td>$${parseFloat(p.precio || 0).toFixed(2)}</td>
-                        <td>#${p.categoria_id || 'N/A'}</td>
-                    </tr>
-                `).join('');
-            } else {
-                throw new Error();
-            }
-        } catch(e) {
-            tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">Servicio ms-productos (:3002) no disponible.</td></tr>';
-        }
-    }
-
-    // 3. Categorías (ms-productos :3002)
-    async function cargarCategorias() {
-        const tabla = document.getElementById('tablaCategorias');
-        try {
-            const res = await fetch('/api/productos/categorias');
-            if (res.ok) {
-                const cats = await res.json();
-                if (cats.length === 0) {
-                    tabla.innerHTML = '<tr><td colspan="2" style="text-align:center;">No hay categorías registradas.</td></tr>';
-                    return;
-                }
-                tabla.innerHTML = cats.map(c => `
-                    <tr>
-                        <td>#${c.id}</td>
-                        <td><strong>${c.nombre || c.nombre_categoria}</strong></td>
-                    </tr>
-                `).join('');
-            } else {
-                throw new Error();
-            }
-        } catch(e) {
-            tabla.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#a6adc8;">Servicio ms-productos (:3002) no disponible.</td></tr>';
-        }
-    }
-
-    // 4. Proveedores (ms-proveedores :3005)
-    async function cargarProveedores() {
-        const tabla = document.getElementById('tablaProveedores');
-        try {
-            const res = await fetch('/api/proveedores/proveedores');
-            if (res.ok) {
-                const provs = await res.json();
-                if (provs.length === 0) {
-                    tabla.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay proveedores registrados.</td></tr>';
-                    return;
-                }
-                tabla.innerHTML = provs.map(p => `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td><strong>${p.nombre_empresa || p.nombre}</strong></td>
-                        <td>${p.telefono || p.contacto || 'N/A'}</td>
-                    </tr>
-                `).join('');
-            } else {
-                throw new Error();
-            }
-        } catch(e) {
-            tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#a6adc8;">Servicio ms-proveedores (:3005) no disponible.</td></tr>';
-        }
-    }
-
-    // 5. Órdenes (ms-ordenes :3007)
-    async function cargarOrdenes() {
-        const tabla = document.getElementById('tablaOrdenes');
-        try {
-            const [resOrdenes, resProvs] = await Promise.all([
-                fetch('/api/ordenes/ordenes'),
-                fetch('/api/proveedores/proveedores').catch(() => null)
-            ]);
-
-            if (!resOrdenes.ok) throw new Error('Error al consultar órdenes');
-            
-            const ordenes = await resOrdenes.json();
-            let mapaProveedores = {};
-
-            if (resProvs && resProvs.ok) {
-                const proveedores = await resProvs.json();
-                proveedores.forEach(p => {
-                    mapaProveedores[p.id] = p.nombre_empresa || p.nombre || `Proveedor #${p.id}`;
-                });
-            }
-            
-            if (ordenes.length === 0) {
-                tabla.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay órdenes registradas.</td></tr>';
-                return;
-            }
-
-            tabla.innerHTML = ordenes.map(o => {
-                const fecha = o.fecha_emision 
-                    ? new Date(o.fecha_emision).toLocaleDateString() 
-                    : 'Sin fecha';
-                const idLimpio = o.proveedor_id ? Math.abs(o.proveedor_id) : 'N/A';
-                const nombreProveedor = mapaProveedores[o.proveedor_id] || `Proveedor #${idLimpio}`;
-
-                return `
-                    <tr>
-                        <td>#${o.id}</td>
-                        <td><strong>${nombreProveedor}</strong></td>
-                        <td>$${parseFloat(o.total || 0).toFixed(2)}</td>
-                        <td>${fecha}</td>
-                    </tr>
-                `;
-            }).join('');
-
-        } catch (err) {
-            tabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #f38ba8;">Servicio ms-ordenes (:3007) no disponible.</td></tr>`;
-        }
-    }
-
-    // Evento Crear Orden
-    document.getElementById('formOrden').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const mensajeDiv = document.getElementById('mensajeForm');
-        mensajeDiv.style.display = 'none';
-
-        const payload = {
-            proveedor_id: parseInt(document.getElementById('proveedor_id').value),
-            producto_id: parseInt(document.getElementById('producto_id').value),
-            monto_total: parseFloat(document.getElementById('total').value),
-            fecha_emision: document.getElementById('fecha_emision').value
-        };
-
-        try {
-            const res = await fetch('/api/ordenes/ordenes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                mensajeDiv.className = 'mensaje exito';
-                mensajeDiv.innerText = '✅ Orden creada exitosamente (Validado con ms-inventario)';
-                mensajeDiv.style.display = 'block';
-                
-                document.getElementById('proveedor_id').value = '';
-                document.getElementById('producto_id').value = '';
-                document.getElementById('total').value = '';
-                cargarOrdenes();
-                cargarDashboard();
-            } else {
-                throw new Error(data.error || 'Error al crear la orden');
-            }
-        } catch (err) {
-            mensajeDiv.className = 'mensaje error';
-            mensajeDiv.innerText = `❌ ${err.message}`;
-            mensajeDiv.style.display = 'block';
-        }
-    });
-
-    function cerrarSesion() {
-        localStorage.clear();
-        window.location.href = 'index.html';
-    }
-</script>
+    async function refresh(){ await Promise.all([load('productos','/api/productos/productos'),load('inventario','/api/inventario/inventario'),load('proveedores','/api/proveedores/proveedores'),load('ordenes','/api/ordenes/ordenes'),load('clientes','/api/clientes/clientes'),load('pedidos','/api/ordenes/pedidos')]); render(); }
+    document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{const id=b.dataset.view;document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('tituloVista').textContent=b.textContent.trim();});
+    document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>document.querySelector(`[data-view="${b.dataset.go}"]`).click()); document.querySelectorAll('[data-refresh]').forEach(b=>b.onclick=refresh);
+    document.getElementById('formOrden').onsubmit=async e=>{e.preventDefault();const msg=document.getElementById('mensajeOrden');const payload={proveedor_id:+document.getElementById('proveedor_id').value,producto_id:+document.getElementById('producto_id').value,monto_total:+document.getElementById('monto_total').value,fecha_emision:document.getElementById('fecha_emision').value};try{const r=await api('/api/ordenes/ordenes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw new Error(d.error||'No fue posible registrar la orden');msg.className='message success';msg.textContent='✓ Orden registrada correctamente';e.target.reset();document.getElementById('fecha_emision').value=new Date().toISOString().slice(0,10);refresh();}catch(err){msg.className='message error';msg.textContent='❌ '+(err.message||'No fue posible registrar la orden');}};
+    document.getElementById('formProducto').onsubmit=async e=>{e.preventDefault();const msg=document.getElementById('mensajeProducto');const v=id=>document.getElementById(id).value;try{const r=await api('/api/productos/productos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:v('p_nombre'),precio:+v('p_precio'),codigo_barras:v('p_codigo'),categoria_id:+v('p_categoria'),stock_actual:+v('p_stock'),imagen_url:v('p_imagen'),descripcion:v('p_descripcion')})}),d=await r.json();if(!r.ok)throw new Error(d.error);msg.className='message success';msg.textContent='✓ Producto publicado en la tienda';e.target.reset();refresh()}catch(err){msg.className='message error';msg.textContent='❌ '+err.message}};
+    window.estadoPedido=async(id,estado)=>{const r=await api('/api/ordenes/pedidos/'+id+'/estado',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({estado})});if(!r.ok)alert('No se pudo actualizar el estado');refresh()};
+    document.getElementById('usuarioNombre').textContent=usuario.nombre||'Usuario';document.getElementById('usuarioRol').textContent='ROL: '+(usuario.rol||'operador').toUpperCase();document.getElementById('saludo').textContent=`Hola, ${usuario.nombre||'usuario'}. Aquí tienes el estado actualizado de tu supermercado.`;document.getElementById('fechaActual').textContent=new Date().toLocaleDateString('es-HN',{weekday:'short',day:'numeric',month:'short'});document.getElementById('fecha_emision').value=new Date().toISOString().slice(0,10);document.getElementById('cerrarSesion').onclick=()=>{localStorage.clear();location.href='index.html'}; refresh();
+  </script>
+</body>
+</html>

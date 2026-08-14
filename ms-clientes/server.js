@@ -10,7 +10,7 @@ app.use(express.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
 const verificarToken = (req, res, next) => {
@@ -29,9 +29,10 @@ const verificarToken = (req, res, next) => {
     return res.status(403).json({ error: 'Token inválido o expirado' });
   }
 };
+const soloAdmin = (req, res, next) => req.usuario?.rol === 'admin' ? next() : res.status(403).json({ error: 'Esta acción requiere una cuenta administradora' });
 
 // GET: Obtener todos los clientes (Protegido)
-app.get('/clientes', verificarToken, async (req, res) => {
+app.get('/clientes', verificarToken, soloAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM clientes ORDER BY id ASC');
     res.json(result.rows);
@@ -41,7 +42,7 @@ app.get('/clientes', verificarToken, async (req, res) => {
 });
 
 // POST: Crear cliente (Protegido)
-app.post('/clientes', verificarToken, async (req, res) => {
+app.post('/clientes', verificarToken, soloAdmin, async (req, res) => {
   const { nombre, email, telefono } = req.body;
   try {
     const result = await pool.query(
@@ -55,7 +56,7 @@ app.post('/clientes', verificarToken, async (req, res) => {
 });
 
 // PUT: Actualizar cliente (Protegido)
-app.put('/clientes/:id', verificarToken, async (req, res) => {
+app.put('/clientes/:id', verificarToken, soloAdmin, async (req, res) => {
   const { id } = req.params;
   const { nombre, email, telefono } = req.body;
   try {
@@ -73,7 +74,7 @@ app.put('/clientes/:id', verificarToken, async (req, res) => {
 });
 
 // DELETE: Eliminar cliente (Protegido)
-app.delete('/clientes/:id', verificarToken, async (req, res) => {
+app.delete('/clientes/:id', verificarToken, soloAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('DELETE FROM clientes WHERE id = $1 RETURNING *', [id]);
