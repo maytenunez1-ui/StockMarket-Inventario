@@ -9,7 +9,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   mensajeDiv.innerText = 'Autenticando...';
 
   try {
-    const response = await fetch('http://localhost:3001/usuarios/login', {
+    const response = await fetch('/api/auth/usuarios/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
