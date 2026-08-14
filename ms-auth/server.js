@@ -20,12 +20,15 @@ const SECRET_KEY = process.env.JWT_SECRET || 'clave_secreta_supermercado';
 
 // Registro
 app.post('/usuarios/registro', async (req, res) => {
-  const { nombre, email, password, rol } = req.body;
+  const { nombre, email, password } = req.body;
+  if (!nombre || !email || !password || password.length < 4) {
+    return res.status(400).json({ error: 'Nombre, correo y una contraseña de al menos 4 caracteres son obligatorios' });
+  }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       'INSERT INTO usuarios (nombre, email, password, rol) VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, rol',
-      [nombre, email, hashedPassword, rol || 'usuario']
+      [nombre, email, hashedPassword, 'cliente']
     );
     res.status(201).json({ mensaje: 'Usuario registrado exitosamente', usuario: result.rows[0] });
   } catch (err) {

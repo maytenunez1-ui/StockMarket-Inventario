@@ -27,9 +27,9 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
-      // 2. Redirigimos al Dashboard después de 1 segundo
+      // 2. Cada rol entra a su experiencia.
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        window.location.href = data.usuario.rol === 'admin' ? 'dashboard.html' : 'cliente.html';
       }, 1000);
 
     } else {
