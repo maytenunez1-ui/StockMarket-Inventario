@@ -1,31 +1,21 @@
 # Despliegue en AWS — StockMarket Inventario
 
-La aplicación usa **Node.js**, **PostgreSQL** y seis microservicios. El diseño de despliegue es:
+La aplicación usa **Node.js**, **PostgreSQL** y seis microservicios. Para el entorno de pruebas, el diseño de despliegue es:
 
 ```text
-Internet → EC2 (Nginx/Docker) → microservicios Node.js → RDS PostgreSQL
+Internet → EC2 (Nginx/Docker) → microservicios Node.js + PostgreSQL
 ```
 
-Solo EC2 publica el puerto 80; las API y la base de datos quedan dentro de la red privada.
+Solo EC2 publica el puerto 80; las API y la base de datos quedan dentro de la red privada de Docker.
 
 ## 1. Recursos en AWS
 
 1. Crea una instancia **EC2 Ubuntu 24.04** (t3.micro para pruebas).
-2. Crea una instancia **RDS PostgreSQL 16** con una base llamada `stockmarket`.
-3. Configura los grupos de seguridad:
+2. Configura los grupos de seguridad:
    - EC2: HTTP `80` desde Internet y SSH `22` únicamente desde tu IP.
-   - RDS: PostgreSQL `5432` solo desde el grupo de seguridad de EC2.
-4. Opcional pero recomendable: asigna una Elastic IP a EC2.
+3. Opcional pero recomendable: asigna una Elastic IP a EC2.
 
-## 2. Preparar la base RDS
-
-Desde una máquina que pueda conectarse a RDS, ejecuta el script incluido:
-
-```bash
-psql "postgresql://USUARIO:CONTRASENA@ENDPOINT_RDS:5432/stockmarket?sslmode=require" -f aws/init.sql
-```
-
-## 3. Instalar y ejecutar en EC2
+## 2. Instalar y ejecutar en EC2
 
 Conéctate a EC2 y ejecuta:
 
@@ -42,7 +32,7 @@ El primer uso instala Docker y crea `.env`. Edita ese archivo:
 nano /opt/stockmarket-inventario/.env
 ```
 
-Configura `DATABASE_URL` con el endpoint de RDS y un `JWT_SECRET` largo, único y privado. Después inicia la aplicación:
+Configura `POSTGRES_PASSWORD` y `JWT_SECRET` con valores largos, únicos y privados. Después inicia la aplicación:
 
 ```bash
 docker compose up -d --build

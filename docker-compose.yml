@@ -1,41 +1,65 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./aws/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
   auth:
     build: .
     command: node ms-auth/server.js
     environment: &service-env
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
+    depends_on: &depends-on-db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   productos:
     build: .
     command: node ms-productos/server.js
     environment: *service-env
+    depends_on: *depends-on-db
     restart: unless-stopped
 
   inventario:
     build: .
     command: node ms-inventario/server.js
     environment: *service-env
+    depends_on: *depends-on-db
     restart: unless-stopped
 
   proveedores:
     build: .
     command: node ms-proveedores/server.js
     environment: *service-env
+    depends_on: *depends-on-db
     restart: unless-stopped
 
   clientes:
     build: .
     command: node ms-clientes/server.js
     environment: *service-env
+    depends_on: *depends-on-db
     restart: unless-stopped
 
   ordenes:
     build: .
     command: node ms-ordenes/server.js
     environment: *service-env
+    depends_on: *depends-on-db
     restart: unless-stopped
 
   web:
@@ -53,3 +77,6 @@ services:
       - clientes
       - ordenes
     restart: unless-stopped
+
+volumes:
+  postgres_data:
