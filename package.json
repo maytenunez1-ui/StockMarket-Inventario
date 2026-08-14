@@ -1,0 +1,31 @@
+{
+  "name": "stockmarket-inventario",
+  "version": "1.0.0",
+  "description": "**Sistema Web de Gestión de Inventario para Supermercados - Proyecto Grupo #4**  \r *Ingeniería de Software II - Universidad José Cecilio del Valle*",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maytenunez1-ui/StockMarket-Inventario.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/maytenunez1-ui/StockMarket-Inventario/issues"
+  },
+  "homepage": "https://github.com/maytenunez1-ui/StockMarket-Inventario#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0"
+  }
+}
