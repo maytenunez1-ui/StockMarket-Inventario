@@ -1,75 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockMarket - Login</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2e;
-            color: #cdd6f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-card {
-            background-color: #181825;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 380px;
-        }
-        h2 { text-align: center; margin-bottom: 1.5rem; color: #89b4fa; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            border: 1px solid #45475a;
-            background-color: #313244;
-            color: #fff;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #89b4fa;
-            color: #11111b;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-        button:hover { background-color: #b4befe; }
-        .mensaje { margin-top: 1rem; text-align: center; font-size: 0.85rem; }
-        .exito { color: #a6e3a1; }
-        .error { color: #f38ba8; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockMarket | Gestión de supermercado</title>
+  <style>
+    :root { --blue:#2563eb; --navy:#102a43; --ink:#14213d; --muted:#64748b; --line:#dbe5f0; --bg:#f4f8fc; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:Inter,Segoe UI,Arial,sans-serif; color:var(--ink); background:linear-gradient(125deg,#e8f1ff 0%,#f7fbff 45%,#e9f8f2 100%); }
+    .layout { min-height:100vh; display:grid; grid-template-columns:minmax(0,1.25fr) minmax(390px,.75fr); }
+    .brand { padding:clamp(36px,7vw,108px); position:relative; overflow:hidden; background:linear-gradient(135deg,#102a43,#144f72 62%,#0f766e); color:#fff; }
+    .brand:before,.brand:after { content:""; position:absolute; border-radius:50%; opacity:.14; border:1px solid #fff; }
+    .brand:before { width:430px;height:430px;right:-150px;top:-135px; } .brand:after { width:300px;height:300px;left:-130px;bottom:-180px; }
+    .logo { position:relative; display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.2px; }
+    .cart { display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#fff;color:#0f766e;font-size:22px; }
+    .brand-content { position:relative; max-width:620px; margin-top:clamp(70px,14vh,170px); }
+    .eyebrow { color:#8ff0cf; font-size:13px;letter-spacing:1.7px;font-weight:800; }
+    h1 { font-size:clamp(34px,5vw,62px);line-height:1.05;margin:15px 0 20px;letter-spacing:-1.8px; }
+    .brand p { color:#dbeafe; font-size:18px; line-height:1.65;max-width:510px; }
+    .features { display:flex;flex-wrap:wrap;gap:10px;margin-top:34px; } .feature { padding:9px 13px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.09);border-radius:999px;font-size:13px; }
+    .login-area { display:grid;place-items:center;padding:34px;background:rgba(255,255,255,.7); }
+    .login-card { width:min(100%,420px);padding:10px; }
+    .login-card h2 { font-size:30px;margin:0 0 9px;letter-spacing:-.8px; } .intro { color:var(--muted);margin:0 0 33px;line-height:1.55; }
+    .form-group { margin:0 0 19px; } label { display:block;font-size:13px;font-weight:750;margin:0 0 8px;color:#334155; }
+    input { width:100%; border:1px solid var(--line);outline:0;border-radius:11px;background:#fff;padding:14px 15px;font-size:15px;color:var(--ink);transition:.18s; }
+    input:focus { border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+    button { width:100%;border:0;border-radius:11px;padding:15px;background:var(--blue);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 20px rgba(37,99,235,.22);transition:.18s; }
+    button:hover { background:#1d4ed8;transform:translateY(-1px); } button:disabled { opacity:.65;cursor:wait;transform:none; }
+    .mensaje { min-height:23px;margin-top:18px;text-align:center;font-size:14px; } .exito { color:#047857; } .error { color:#be123c; }
+    .safe { display:flex;align-items:center;justify-content:center;gap:7px;margin-top:30px;color:#718096;font-size:12px; }
+    @media (max-width:800px) { .layout { grid-template-columns:1fr; }.brand { min-height:390px;padding:38px 30px; }.brand-content { margin-top:63px; }.login-area { padding:45px 28px; }.login-card { padding:0; } }
+  </style>
 </head>
 <body>
-
-    <div class="login-card">
-        <h2>StockMarket 🛒</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Correo Electrónico</label>
-                <input type="email" id="email" required value="admin@stockmarket.com">
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" required value="1234">
-            </div>
-            <button type="submit">Iniciar Sesión</button>
-        </form>
-        <div id="mensaje" class="mensaje"></div>
-    </div>
-
-    <script src="app.js"></script>
+  <main class="layout">
+    <section class="brand" aria-label="StockMarket">
+      <div class="logo"><span class="cart">🛒</span><span>StockMarket</span></div>
+      <div class="brand-content"><div class="eyebrow">GESTIÓN INTELIGENTE</div><h1>Tu supermercado, siempre bajo control.</h1><p>Administra productos, existencias, proveedores y órdenes desde un solo lugar.</p><div class="features"><span class="feature">Inventario en tiempo real</span><span class="feature">Control de proveedores</span><span class="feature">Órdenes de compra</span></div></div>
+    </section>
+    <section class="login-area">
+      <div class="login-card"><h2>Bienvenido de nuevo</h2><p class="intro">Ingresa con tu cuenta para acceder al centro de control.</p>
+        <form id="loginForm"><div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email" autocomplete="email" placeholder="tu-correo@empresa.com" required></div><div class="form-group"><label for="password">Contraseña</label><input type="password" id="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" required></div><button type="submit">Entrar al panel</button></form>
+        <div id="mensaje" class="mensaje" role="status"></div><div class="safe">🔒 Acceso seguro al panel administrativo</div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
 </body>
 </html>
