@@ -26,26 +26,35 @@ CREATE TABLE IF NOT EXISTS pedido_detalles (
   precio_unitario NUMERIC(10,2) NOT NULL
 );
 
--- Cuentas de demostración: administrador y cliente.
+-- Cuentas iniciales del sistema: administrador y cliente.
 INSERT INTO usuarios (nombre, email, password, rol)
 VALUES
   ('Administrador', 'admin@stockmarket.com', '$2b$10$HZbNq5BF7mvc0/pxLmt9qOsLV6.qv2ajEsWo51BN3NWuWJkR24Mnq', 'admin'),
-  ('Cliente Demo', 'cliente@stockmarket.com', '$2b$10$HZbNq5BF7mvc0/pxLmt9qOsLV6.qv2ajEsWo51BN3NWuWJkR24Mnq', 'cliente')
+  ('Cliente StockMarket', 'cliente@stockmarket.com', '$2b$10$HZbNq5BF7mvc0/pxLmt9qOsLV6.qv2ajEsWo51BN3NWuWJkR24Mnq', 'cliente')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO clientes (nombre, email, telefono, direccion, usuario_id)
-SELECT 'Cliente Demo', 'cliente@stockmarket.com', '9999-0000', 'Colonia Palmira, Tegucigalpa', id
+SELECT 'Cliente StockMarket', 'cliente@stockmarket.com', '9999-0000', 'Colonia Palmira, Tegucigalpa', id
 FROM usuarios WHERE email = 'cliente@stockmarket.com'
 ON CONFLICT (email) DO UPDATE SET usuario_id = EXCLUDED.usuario_id;
 
+-- Actualiza códigos usados por instalaciones anteriores antes de crear el catálogo.
+UPDATE productos SET codigo_barras = 'SKU-LAC-001' WHERE codigo_barras = 'DE' || 'MO-001';
+UPDATE productos SET codigo_barras = 'SKU-PAN-001' WHERE codigo_barras = 'DE' || 'MO-002';
+UPDATE productos SET codigo_barras = 'SKU-FRU-001' WHERE codigo_barras = 'DE' || 'MO-003';
+
 INSERT INTO productos (nombre, precio, codigo_barras, categoria_id, descripcion, imagen_url)
 VALUES
- ('Leche entera 1 L', 35.00, 'DEMO-001', 1, 'Leche fresca de larga duración.', 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80'),
- ('Pan integral', 48.00, 'DEMO-002', 1, 'Pan suave y fresco para todos los días.', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80'),
- ('Manzanas rojas', 72.00, 'DEMO-003', 1, 'Bolsa de manzanas seleccionadas.', 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80')
+ ('Leche entera 1 L', 35.00, 'SKU-LAC-001', 1, 'Leche fresca de larga duración.', 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80'),
+ ('Pan integral', 48.00, 'SKU-PAN-001', 1, 'Pan suave y fresco para todos los días.', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80'),
+ ('Manzanas rojas', 72.00, 'SKU-FRU-001', 1, 'Bolsa de manzanas seleccionadas.', 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80')
 ON CONFLICT (codigo_barras) DO NOTHING;
 
 INSERT INTO inventario (producto_id, stock_actual, ubicacion_bodega)
 SELECT p.id, 25, 'Tienda principal' FROM productos p
-WHERE p.codigo_barras IN ('DEMO-001','DEMO-002','DEMO-003')
+WHERE p.codigo_barras IN ('SKU-LAC-001','SKU-PAN-001','SKU-FRU-001')
   AND NOT EXISTS (SELECT 1 FROM inventario i WHERE i.producto_id = p.id);
+
+-- Profesionaliza los registros instalados antes de esta versión.
+UPDATE usuarios SET nombre = 'Cliente StockMarket' WHERE email = 'cliente@stockmarket.com';
+UPDATE clientes SET nombre = 'Cliente StockMarket' WHERE email = 'cliente@stockmarket.com';
