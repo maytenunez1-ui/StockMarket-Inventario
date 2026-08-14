@@ -67,6 +67,7 @@
     </main>
   </div>
   <script>
+    const minimalStyle=document.createElement('link');minimalStyle.rel='stylesheet';minimalStyle.href='minimal.css';document.head.append(minimalStyle);
     const token = localStorage.getItem('token'); const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
     if (!token || !usuario) location.href = 'index.html'; if(usuario.rol!=='admin') location.href='cliente.html';
     const api = async (url, options={}) => fetch(url,{...options,headers:{...options.headers,Authorization:`Bearer ${token}`}});

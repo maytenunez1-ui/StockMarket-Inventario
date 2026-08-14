@@ -1,4 +1,4 @@
-const $=id=>document.getElementById(id);const token=localStorage.getItem('token');const usuario=JSON.parse(localStorage.getItem('usuario')||'null');
+const minimalStyle=document.createElement('link');minimalStyle.rel='stylesheet';minimalStyle.href='minimal.css';document.head.append(minimalStyle);const $=id=>document.getElementById(id);const token=localStorage.getItem('token');const usuario=JSON.parse(localStorage.getItem('usuario')||'null');
 if(!token||!usuario||usuario.rol==='admin'){location.href='index.html'}
 const ui={saludo:$('saludo'),count:$('count'),catalogo:$('catalogo'),buscar:$('buscar'),filtro:$('filtro'),items:$('items'),total:$('total'),drawer:$('drawer'),shade:$('shade'),modal:$('modal'),mensaje:$('mensaje'),pago:$('pago'),notaPago:$('notaPago')};
 ui.saludo.textContent=`Hola, ${usuario.nombre}`;let products=[],cart=JSON.parse(localStorage.getItem('cart')||'[]');

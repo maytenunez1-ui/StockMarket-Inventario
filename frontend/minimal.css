@@ -1,0 +1,73 @@
+/* Shared, deliberately quiet visual system. */
+:root { --ink:#172033; --muted:#6b7280; --line:#e5e7eb; --surface:#fff; --page:#fafafa; --brand:#146c4d; --brand-soft:#edf7f2; --dark:#172033; }
+* { box-sizing:border-box; }
+body { background:var(--page); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+
+/* Customer store */
+body > header { height:68px; background:rgba(255,255,255,.96); border-color:var(--line); box-shadow:none; }
+.container { max-width:1180px; }
+.brand { font-size:19px; letter-spacing:-.35px; }
+.mark { width:34px; height:34px; margin-right:8px; border-radius:9px; background:var(--brand); font-size:15px; }
+.right { gap:14px; color:var(--muted); }
+.cart,.primary { background:var(--dark); border-radius:8px; padding:10px 13px; font-size:14px; box-shadow:none; }
+.logout { color:var(--muted); }
+.hero { background:#f0f6f3; color:var(--ink); border-bottom:1px solid var(--line); }
+.hero .container { padding-top:58px; padding-bottom:58px; }
+.eyebrow { color:var(--brand); font-size:11px; letter-spacing:.12em; }
+.hero h1 { max-width:650px; margin:8px 0 13px; font-size:clamp(34px,5vw,50px); letter-spacing:-1.7px; }
+.hero p { color:var(--muted); font-size:17px; }
+.benefits { margin-top:22px; }
+.benefit { border-color:#d7e7de; background:#fff; color:#476257; border-radius:6px; padding:8px 10px; }
+.store { padding-top:38px; }
+.store-head { border:0; padding-bottom:4px; }
+.store-head h2 { font-size:25px; letter-spacing:-.65px; }
+.secure { color:#3b6651; background:var(--brand-soft); border-radius:6px; font-weight:650; }
+.tools { margin:20px 0 26px; padding:0; background:transparent; border:0; box-shadow:none; }
+.tools input,.tools select,.form input,.form textarea,.form select { border-color:#d9dde3; border-radius:7px; padding:11px 12px; box-shadow:none; }
+.tools select { max-width:190px; }
+.grid { gap:16px; }
+.product { border-radius:10px; box-shadow:none; transition:border-color .18s,transform .18s; }
+.product:hover { border-color:#b8d2c3; box-shadow:none; transform:translateY(-2px); }
+.product img { height:174px; }
+.product-body { padding:14px; }
+.product h3 { font-size:15px; }
+.product p { min-height:32px; }
+.price { color:var(--ink); font-size:18px; }
+.add { border:1px solid #cfe2d7; background:#fff; color:var(--brand); border-radius:7px; }
+.add:hover { background:var(--brand); border-color:var(--brand); }
+.drawer { box-shadow:-8px 0 30px #17203314; }
+.checkout { background:var(--brand); }
+.box,.drawer { border-radius:0; }
+.payment-note { background:var(--brand-soft); color:#3b6651; }
+
+/* Administrative panel */
+.shell { grid-template-columns:232px 1fr; }
+aside { background:#172033; padding:22px 14px; box-shadow:none; }
+aside .brand { padding:0 10px 25px; font-size:18px; }
+aside .brand span { width:32px; height:32px; border-radius:8px; background:var(--brand); }
+.nav-label { color:#94a3b8; }
+.nav-btn { padding:10px 11px; border-radius:7px; font-size:14px; }
+.nav-btn:hover,.nav-btn.active { background:#ffffff12; transform:none; }
+.profile,.ujcv { border-color:#ffffff1a; }
+main { padding:36px 42px; }
+main > header { margin-bottom:31px; }
+h1 { font-size:26px; letter-spacing:-.75px; }
+.live { border-color:#d4e8dd; background:var(--brand-soft); color:#3b6651; border-radius:6px; }
+.badge { background:#f2f4f7; color:#596273; border-radius:6px; }
+.cards { gap:12px; margin:20px 0; }
+.card,.panel { border-radius:9px; box-shadow:none; }
+.card { padding:17px; }
+.card:before { width:3px; background:var(--brand); }
+.card:nth-child(2):before,.card:nth-child(3):before,.card:nth-child(4):before { background:var(--brand); }
+.metric { font-size:27px; }
+.ops { background:#f0f6f3; color:var(--ink); padding:24px; }
+.ops:after { display:none; }
+.ops p { color:var(--muted); }
+.ops-state { background:#fff; border-color:#d6e7dd; color:#476257; border-radius:8px; }
+.ops-state b { color:var(--brand); }
+.panel { padding:20px; }
+.btn { background:var(--brand); border-radius:7px; padding:10px 13px; }
+.btn:hover { background:#0e563c; }
+.btn.secondary { background:#f2f4f7; color:#374151; }
+@media(max-width:900px) { .shell{grid-template-columns:1fr} main{padding:22px} }
+@media(max-width:600px) { .hero .container{padding-top:38px;padding-bottom:38px}.right #saludo{display:none}.tools select{max-width:none} }
