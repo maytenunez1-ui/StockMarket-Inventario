@@ -47,6 +47,8 @@ services:
     command: node ms-productos/server.js
     environment: *service-env
     depends_on: *depends-on-db
+    volumes:
+      - product_uploads:/app/ms-productos/uploads
     restart: unless-stopped
 
   inventario:
@@ -95,3 +97,4 @@ services:
 
 volumes:
   postgres_data:
+  product_uploads:

@@ -1,12 +1,27 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+const multer = require('multer');
 const jwt = require('jsonwebtoken'); // 👈 1. Importamos JWT
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 app.use(express.json());
+
+const uploadDirectory = path.join(__dirname, 'uploads');
+fs.mkdirSync(uploadDirectory, { recursive: true });
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: uploadDirectory,
+    filename: (req, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname).toLowerCase()}`)
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => cb(null, ['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype))
+});
+app.use('/uploads', express.static(uploadDirectory));
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -35,6 +50,14 @@ const soloAdmin = (req, res, next) => {
   if (req.usuario?.rol !== 'admin') return res.status(403).json({ error: 'Esta acción requiere una cuenta administradora' });
   next();
 };
+
+app.post('/productos/imagen', verificarToken, soloAdmin, (req, res) => {
+  upload.single('imagen')(req, res, err => {
+    if (err) return res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'La imagen supera el límite de 5 MB' : 'Selecciona una imagen PNG, JPG o WebP válida' });
+    if (!req.file) return res.status(400).json({ error: 'Selecciona una imagen PNG, JPG o WebP' });
+    res.status(201).json({ imagen_url: `/uploads/${req.file.filename}` });
+  });
+});
 
 // Catálogo de compra: no expone datos internos ni requiere sesión.
 app.get('/productos/publicos', async (req, res) => {
