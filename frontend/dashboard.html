@@ -5,33 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StockMarket | Panel de control</title>
   <style>
-    :root { --navy:#10233f; --blue:#2563eb; --sky:#eaf2ff; --ink:#172033; --muted:#64748b; --line:#e5eaf2; --green:#059669; --red:#dc2626; --amber:#d97706; }
+    :root { --navy:#0b1f36; --blue:#2563eb; --sky:#eaf2ff; --ink:#172033; --muted:#64748b; --line:#e5eaf2; --green:#059669; --red:#dc2626; --amber:#d97706; --surface:#ffffff; }
     * { box-sizing:border-box; }
-    body { margin:0; color:var(--ink); background:#f6f8fc; font:15px/1.45 Inter,Segoe UI,Arial,sans-serif; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 85% 0,#e6f1ff 0,transparent 26%),#f6f8fc; font:15px/1.45 Inter,Segoe UI,Arial,sans-serif; }
     .shell { display:grid; grid-template-columns:255px 1fr; min-height:100vh; }
-    aside { background:var(--navy); color:#dbeafe; padding:26px 16px; display:flex; flex-direction:column; }
+    aside { background:linear-gradient(180deg,#0b1f36 0%,#102f52 100%); color:#dbeafe; padding:26px 16px; display:flex; flex-direction:column; box-shadow:5px 0 20px #0f172a12; }
     .brand { display:flex; gap:11px; align-items:center; padding:0 12px 30px; font-size:20px; font-weight:800; color:#fff; }
     .brand span { display:grid; place-items:center; width:35px; height:35px; border-radius:10px; background:#3b82f6; }
     .nav-label { padding:0 12px; font-size:11px; letter-spacing:.08em; color:#94a3b8; font-weight:700; text-transform:uppercase; }
-    .nav-btn { width:100%; margin:5px 0; padding:12px; border:0; border-radius:9px; color:#cbd5e1; background:transparent; font:inherit; text-align:left; cursor:pointer; }
-    .nav-btn:hover,.nav-btn.active { background:#1e3a5f; color:#fff; }
+    .nav-btn { width:100%; margin:4px 0; padding:12px; border:0; border-radius:9px; color:#cbd5e1; background:transparent; font:inherit; text-align:left; cursor:pointer; transition:.18s; }
+    .nav-btn:hover,.nav-btn.active { background:#ffffff18; color:#fff; transform:translateX(3px); }
     .profile { margin-top:auto; padding:16px 12px 0; border-top:1px solid #284565; color:#fff; } .ujcv { margin:18px 10px 0; padding:12px 0 0; border-top:1px solid #284565; } .ujcv img{width:170px;max-height:58px;object-fit:contain;background:#fff;border-radius:7px;padding:5px} .ujcv small{display:block;color:#9fb3ce;margin-top:5px;font-size:10px}
     .profile small { display:block; color:#9fb3ce; } .logout { margin-top:12px; color:#bfdbfe; background:none; border:0; padding:0; cursor:pointer; font:inherit; }
-    main { min-width:0; padding:28px 34px; }
+    main { min-width:0; padding:32px 38px; }
     header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
     h1 { margin:0; font-size:25px; } h2 { margin:0 0 6px; font-size:20px; } p { margin:0; color:var(--muted); }
-    .badge { padding:8px 11px; background:#dbeafe; color:#1d4ed8; border-radius:999px; font-size:12px; font-weight:700; }
+    .header-actions{display:flex;align-items:center;gap:10px}.live{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #bbf7d0;background:#f0fdf4;color:#047857;border-radius:999px;font-size:12px;font-weight:750}.live:before{content:"";width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 0 4px #d1fae5}.badge { padding:8px 11px; background:#dbeafe; color:#1d4ed8; border-radius:999px; font-size:12px; font-weight:700; }
     .section { display:none; } .section.active { display:block; }
     .cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:24px 0; }
-    .card,.panel { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 2px 8px #1e293b08; }
-    .card { padding:18px; } .card .icon { float:right; font-size:22px; } .card small { color:var(--muted); font-weight:600; } .metric { font-size:28px; font-weight:800; margin-top:6px; } .ops { background:linear-gradient(110deg,#102a43,#175a76); color:#fff; padding:24px; display:flex; justify-content:space-between; gap:24px; align-items:center; overflow:hidden; position:relative; } .ops:after{content:"";position:absolute;width:210px;height:210px;border:1px solid #ffffff28;border-radius:50%;right:-65px;top:-85px}.ops h2,.ops p{position:relative;z-index:1}.ops p{color:#d5e9f3;max-width:580px}.ops-state{position:relative;z-index:1;background:#ffffff16;border:1px solid #ffffff2e;border-radius:12px;padding:14px;min-width:190px}.ops-state b{display:block;color:#86efac;margin-bottom:5px}
+    .card,.panel { background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 8px 20px #1e293b0a; }
+    .card { padding:19px; position:relative; overflow:hidden; } .card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--blue)}.card:nth-child(2):before{background:#8b5cf6}.card:nth-child(3):before{background:#059669}.card:nth-child(4):before{background:#d97706}.card .icon { float:right; font-size:23px; } .card small { color:var(--muted); font-weight:650; } .metric { font-size:30px; font-weight:850; margin-top:6px; letter-spacing:-.8px; } .ops { background:linear-gradient(110deg,#102a43,#175a76); color:#fff; padding:27px; display:flex; justify-content:space-between; gap:24px; align-items:center; overflow:hidden; position:relative; } .ops:after{content:"";position:absolute;width:250px;height:250px;border:1px solid #ffffff28;border-radius:50%;right:-65px;top:-85px}.ops h2,.ops p{position:relative;z-index:1}.ops h2{font-size:25px}.ops p{color:#d5e9f3;max-width:580px}.ops-state{position:relative;z-index:1;background:#ffffff16;border:1px solid #ffffff2e;border-radius:12px;padding:14px;min-width:190px}.ops-state b{display:block;color:#86efac;margin-bottom:5px}
     .panel { padding:22px; margin-bottom:20px; overflow:auto; } .panel-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
     table { width:100%; border-collapse:collapse; min-width:530px; } th { text-align:left; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:.04em; } th,td { border-bottom:1px solid var(--line); padding:13px 8px; }
-    tr:last-child td { border:0; } .status { padding:5px 9px; border-radius:999px; font-size:12px; font-weight:700; } .ok { color:#047857; background:#d1fae5; } .low { color:#b45309; background:#fef3c7; }
+    tbody tr{transition:.14s}tbody tr:hover{background:#f8fbff}tr:last-child td { border:0; } .status { padding:5px 9px; border-radius:999px; font-size:12px; font-weight:700; } .ok { color:#047857; background:#d1fae5; } .low { color:#b45309; background:#fef3c7; }
     .two-col { display:grid; grid-template-columns:1.25fr .75fr; gap:20px; }
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; } .form-grid .wide { grid-column:1/-1; }
     label { display:block; color:#475569; font-size:13px; font-weight:650; margin-bottom:5px; }
-    input { width:100%; padding:10px 11px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; outline-color:var(--blue); }
+    input,select { width:100%; padding:10px 11px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; outline-color:var(--blue); background:#fff; }
     .btn { border:0; border-radius:8px; padding:11px 15px; background:var(--blue); color:#fff; font:inherit; font-weight:700; cursor:pointer; } .btn:hover{background:#1d4ed8}.btn.secondary{background:#eef2ff;color:#3730a3}
     .empty { padding:22px; text-align:center; color:var(--muted); } .message { margin-top:12px; font-weight:650; } .error{color:var(--red)} .success{color:var(--green)}
     @media(max-width:900px){.shell{grid-template-columns:1fr} aside{padding:12px;position:sticky;top:0;z-index:2}.brand{padding:0 6px 8px}.nav-label,.profile{display:none}.nav-btn{display:inline-block;width:auto;margin:2px;padding:8px}main{padding:22px}.cards{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}} @media(max-width:520px){.cards,.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}header{align-items:flex-start;gap:12px;flex-direction:column}}
@@ -52,7 +52,7 @@
       <div class="profile"><strong id="usuarioNombre">Administrador</strong><small id="usuarioRol">ROL: ADMIN</small><button class="logout" id="cerrarSesion">↪ Cerrar sesión</button></div><div class="ujcv"><img src="assets/logo-ujcv.png" alt="Universidad José Cecilio del Valle"><small>Proyecto académico · UJCV</small></div>
     </aside>
     <main>
-      <header><div><h1 id="tituloVista">Resumen del inventario</h1><p id="saludo">Controla el estado de tu supermercado en tiempo real.</p></div><span class="badge" id="fechaActual"></span></header>
+      <header><div><h1 id="tituloVista">Resumen del inventario</h1><p id="saludo">Controla el estado de tu supermercado en tiempo real.</p></div><div class="header-actions"><span class="live">Operación activa</span><span class="badge" id="fechaActual"></span></div></header>
       <section class="section active" id="inicio">
         <div class="panel ops"><div><div class="nav-label" style="padding:0;color:#93c5fd">CENTRO DE OPERACIONES</div><h2>Todo el negocio, bajo control.</h2><p>Supervisa inventario, pedidos de compra y entregas a domicilio desde un mismo centro administrativo.</p></div><div class="ops-state"><b>● Sistema operativo</b><small>Catálogo, delivery y base de datos conectados</small></div></div>
         <div class="cards"><div class="card"><span class="icon">📦</span><small>Productos registrados</small><div class="metric" id="metricProductos">—</div></div><div class="card"><span class="icon">🏪</span><small>Proveedores activos</small><div class="metric" id="metricProveedores">—</div></div><div class="card"><span class="icon">🛵</span><small>Pedidos delivery</small><div class="metric" id="metricPedidos">—</div></div><div class="card"><span class="icon">⚠️</span><small>Alertas de stock</small><div class="metric" id="metricAlertas">—</div></div></div>
