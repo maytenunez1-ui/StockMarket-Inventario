@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors'); // 👈 Agregado
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
-const jwt = require('jwt-simple');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
@@ -16,7 +16,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-const SECRET_KEY = process.env.JWT_SECRET || 'secreto_super_seguro';
+const SECRET_KEY = process.env.JWT_SECRET || 'clave_secreta_supermercado';
 
 // Registro
 app.post('/usuarios/registro', async (req, res) => {
@@ -56,7 +56,7 @@ app.post('/usuarios/login', async (req, res) => {
       rol: usuario.rol
     };
 
-    const token = jwt.encode(payload, SECRET_KEY);
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '8h' });
 
     res.json({
       mensaje: 'Login exitoso',

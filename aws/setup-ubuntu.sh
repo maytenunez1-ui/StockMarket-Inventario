@@ -1,48 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="/var/www/supermercado-ujcv"
-REPO_URL="https://github.com/amnimaca01-del/Biblioteca.git"
+APP_DIR="/opt/stockmarket-inventario"
+REPO_URL="https://github.com/maytenunez1-ui/StockMarket-Inventario.git"
 
-sudo apt update
-sudo apt install -y nginx git unzip curl software-properties-common
-sudo add-apt-repository ppa:ondrej/php -y
-sudo apt update
-sudo apt install -y php8.3-fpm php8.3-cli php8.3-mysql php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-bcmath php8.3-tokenizer
-
-if ! command -v composer >/dev/null 2>&1; then
-    curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-    sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-fi
-
-sudo mkdir -p "$APP_DIR"
-sudo chown -R "$USER":"$USER" "$APP_DIR"
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl git
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 if [ ! -d "$APP_DIR/.git" ]; then
-    git clone "$REPO_URL" "$APP_DIR"
+  sudo git clone "$REPO_URL" "$APP_DIR"
 else
-    cd "$APP_DIR"
-    git pull
+  sudo git -C "$APP_DIR" pull --ff-only
 fi
-
+sudo chown -R "$USER":"$USER" "$APP_DIR"
 cd "$APP_DIR"
-composer install --no-dev --optimize-autoloader
 
 if [ ! -f .env ]; then
-    cp .env.aws.example .env
-    echo "Edita $APP_DIR/.env con APP_URL y datos de RDS antes de continuar."
+  cp .env.aws.example .env
+  echo "Edita $APP_DIR/.env con DATABASE_URL y JWT_SECRET, después ejecuta: docker compose up -d --build"
+  exit 0
 fi
 
-php artisan key:generate --force
-sudo chown -R www-data:www-data storage bootstrap/cache
-sudo chmod -R ug+rw storage bootstrap/cache
-
-sudo cp aws/nginx-supermercado.conf /etc/nginx/sites-available/supermercado-ujcv
-sudo ln -sf /etc/nginx/sites-available/supermercado-ujcv /etc/nginx/sites-enabled/supermercado-ujcv
-sudo rm -f /etc/nginx/sites-enabled/default
-sudo nginx -t
-sudo systemctl reload nginx
-
-echo "Servidor listo. Ahora configura .env y ejecuta:"
-echo "php artisan migrate --seed --force"
-echo "php artisan config:cache"
+docker compose up -d --build
+docker compose ps

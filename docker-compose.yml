@@ -1,0 +1,55 @@
+services:
+  auth:
+    build: .
+    command: node ms-auth/server.js
+    environment: &service-env
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    restart: unless-stopped
+
+  productos:
+    build: .
+    command: node ms-productos/server.js
+    environment: *service-env
+    restart: unless-stopped
+
+  inventario:
+    build: .
+    command: node ms-inventario/server.js
+    environment: *service-env
+    restart: unless-stopped
+
+  proveedores:
+    build: .
+    command: node ms-proveedores/server.js
+    environment: *service-env
+    restart: unless-stopped
+
+  clientes:
+    build: .
+    command: node ms-clientes/server.js
+    environment: *service-env
+    restart: unless-stopped
+
+  ordenes:
+    build: .
+    command: node ms-ordenes/server.js
+    environment: *service-env
+    restart: unless-stopped
+
+  web:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./aws/nginx-supermercado.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - auth
+      - productos
+      - inventario
+      - proveedores
+      - clientes
+      - ordenes
+    restart: unless-stopped

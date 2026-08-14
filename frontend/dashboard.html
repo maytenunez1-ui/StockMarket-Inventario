@@ -1,4 +1,16 @@
 <script>
+    // Todas las llamadas pasan por el mismo dominio, lo que permite desplegar
+    // el frontend y las API detrás de Nginx sin exponer puertos internos.
+    const fetchOriginal = window.fetch.bind(window);
+    window.fetch = (input, init = {}) => {
+        const destino = String(input);
+        const tokenActual = localStorage.getItem('token');
+        const headers = { ...(init.headers || {}) };
+        if (destino.startsWith('/api/') && tokenActual) {
+            headers.Authorization = `Bearer ${tokenActual}`;
+        }
+        return fetchOriginal(input, { ...init, headers });
+    };
     const token = localStorage.getItem('token');
     const usuario = JSON.parse(localStorage.getItem('usuario'));
 
@@ -35,10 +47,10 @@
     async function cargarDashboard() {
         const tabla = document.getElementById('tablaAlertas');
         const rutasInventario = [
-            'http://localhost:3003/inventario',
-            'http://localhost:3003/inventarios',
-            'http://localhost:3003/stock',
-            'http://localhost:3003/alertas'
+            '/api/inventario/inventario',
+            '/api/inventario/inventarios',
+            '/api/inventario/stock',
+            '/api/inventario/alertas'
         ];
 
         let items = null;
@@ -87,7 +99,7 @@
     async function cargarProductos() {
         const tabla = document.getElementById('tablaProductos');
         try {
-            const res = await fetch('http://localhost:3002/productos');
+            const res = await fetch('/api/productos/productos');
             if (res.ok) {
                 const prods = await res.json();
                 if (prods.length === 0) {
@@ -114,7 +126,7 @@
     async function cargarCategorias() {
         const tabla = document.getElementById('tablaCategorias');
         try {
-            const res = await fetch('http://localhost:3002/categorias');
+            const res = await fetch('/api/productos/categorias');
             if (res.ok) {
                 const cats = await res.json();
                 if (cats.length === 0) {
@@ -139,7 +151,7 @@
     async function cargarProveedores() {
         const tabla = document.getElementById('tablaProveedores');
         try {
-            const res = await fetch('http://localhost:3005/proveedores');
+            const res = await fetch('/api/proveedores/proveedores');
             if (res.ok) {
                 const provs = await res.json();
                 if (provs.length === 0) {
@@ -166,8 +178,8 @@
         const tabla = document.getElementById('tablaOrdenes');
         try {
             const [resOrdenes, resProvs] = await Promise.all([
-                fetch('http://localhost:3007/ordenes'),
-                fetch('http://localhost:3005/proveedores').catch(() => null)
+                fetch('/api/ordenes/ordenes'),
+                fetch('/api/proveedores/proveedores').catch(() => null)
             ]);
 
             if (!resOrdenes.ok) throw new Error('Error al consultar órdenes');
@@ -218,12 +230,12 @@
         const payload = {
             proveedor_id: parseInt(document.getElementById('proveedor_id').value),
             producto_id: parseInt(document.getElementById('producto_id').value),
-            total: parseFloat(document.getElementById('total').value),
+            monto_total: parseFloat(document.getElementById('total').value),
             fecha_emision: document.getElementById('fecha_emision').value
         };
 
         try {
-            const res = await fetch('http://localhost:3007/ordenes', {
+            const res = await fetch('/api/ordenes/ordenes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
