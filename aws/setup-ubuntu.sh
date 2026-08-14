@@ -16,6 +16,7 @@ if command -v apt-get >/dev/null 2>&1; then
 elif command -v dnf >/dev/null 2>&1; then
   sudo dnf install -y git docker
   sudo systemctl enable --now docker
+  sudo install -d /usr/local/lib/docker/cli-plugins
   sudo curl -L https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
   sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 else
