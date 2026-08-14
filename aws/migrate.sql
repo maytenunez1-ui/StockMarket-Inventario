@@ -47,12 +47,21 @@ INSERT INTO productos (nombre, precio, codigo_barras, categoria_id, descripcion,
 VALUES
  ('Leche entera 1 L', 35.00, 'SKU-LAC-001', 1, 'Leche fresca de larga duración.', 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80'),
  ('Pan integral', 48.00, 'SKU-PAN-001', 1, 'Pan suave y fresco para todos los días.', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80'),
- ('Manzanas rojas', 72.00, 'SKU-FRU-001', 1, 'Bolsa de manzanas seleccionadas.', 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80')
+ ('Manzanas rojas', 72.00, 'SKU-FRU-001', 1, 'Bolsa de manzanas seleccionadas.', 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80'),
+ ('Arroz premium 2 lb', 46.00, 'SKU-GRA-001', 1, 'Arroz de grano largo, ideal para toda ocasión.', 'https://images.unsplash.com/photo-1586208958839-06c17cacdf08?auto=format&fit=crop&w=600&q=80'),
+ ('Frijoles rojos 2 lb', 52.00, 'SKU-GRA-002', 1, 'Frijoles rojos seleccionados.', 'https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=600&q=80'),
+ ('Huevos grandes 12 unidades', 64.00, 'SKU-AVI-001', 1, 'Huevos frescos de granja.', 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80'),
+ ('Café molido 340 g', 118.00, 'SKU-BEB-001', 1, 'Café aromático de tueste medio.', 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80'),
+ ('Queso fresco 500 g', 95.00, 'SKU-LAC-002', 1, 'Queso fresco para desayunos y comidas.', 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=600&q=80'),
+ ('Jugo de naranja 1 L', 58.00, 'SKU-BEB-002', 1, 'Jugo de naranja listo para servir.', 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80'),
+ ('Aceite vegetal 900 ml', 86.00, 'SKU-ABA-001', 1, 'Aceite vegetal para tu cocina.', 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80'),
+ ('Pasta spaghetti 400 g', 39.00, 'SKU-GRA-003', 1, 'Pasta de trigo de cocción rápida.', 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?auto=format&fit=crop&w=600&q=80'),
+ ('Detergente líquido 1 L', 110.00, 'SKU-HOG-001', 1, 'Limpieza profunda para tu hogar.', 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=600&q=80')
 ON CONFLICT (codigo_barras) DO NOTHING;
 
 INSERT INTO inventario (producto_id, stock_actual, ubicacion_bodega)
 SELECT p.id, 25, 'Tienda principal' FROM productos p
-WHERE p.codigo_barras IN ('SKU-LAC-001','SKU-PAN-001','SKU-FRU-001')
+WHERE p.codigo_barras IN ('SKU-LAC-001','SKU-PAN-001','SKU-FRU-001','SKU-GRA-001','SKU-GRA-002','SKU-AVI-001','SKU-BEB-001','SKU-LAC-002','SKU-BEB-002','SKU-ABA-001','SKU-GRA-003','SKU-HOG-001')
   AND NOT EXISTS (SELECT 1 FROM inventario i WHERE i.producto_id = p.id);
 
 -- Profesionaliza los registros instalados antes de esta versión.
