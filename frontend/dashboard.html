@@ -1,493 +1,258 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockMarket - Panel Principal</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2e;
-            color: #cdd6f4;
-            padding: 2rem;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container { width: 100%; max-width: 950px; }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #181825;
-            padding: 1.5rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        h1 { color: #89b4fa; margin: 0; font-size: 1.5rem; }
-        .user-badge {
-            background-color: #313244;
-            padding: 6px 12px;
-            border-radius: 6px;
-            color: #a6e3a1;
-            font-weight: bold;
-            font-size: 0.85rem;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .btn-logout {
-            background-color: #f38ba8;
-            color: #11111b;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-logout:hover { background-color: #eba0ac; }
+<script>
+    const token = localStorage.getItem('token');
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
 
-        /* NAV PESTAÑAS (Las 6 Pantallas) */
-        .navbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .nav-btn {
-            background-color: #313244;
-            color: #cdd6f4;
-            border: 1px solid #45475a;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .nav-btn:hover, .nav-btn.active {
-            background-color: #89b4fa;
-            color: #11111b;
-            border-color: #89b4fa;
-        }
-
-        .card {
-            background-color: #181825;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            margin-bottom: 1.5rem;
-        }
-        h2 { color: #89b4fa; margin-top: 0; font-size: 1.2rem; }
+    if (!token || !usuario) {
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('bienvenida').innerText = `¡Hola, ${usuario.nombre}! 👋`;
+        document.getElementById('badge').innerText = `ROL: ${usuario.rol.toUpperCase()}`;
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
+        // Asignar fecha actual al input date
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha_emision').value = hoy;
+        
+        cargarTodo();
+    }
+
+    // Navegación entre las vistas
+    function verPantalla(id, btn) {
+        document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`pantalla-${id}`).classList.add('activa');
+        btn.classList.add('active');
+    }
+
+    async function cargarTodo() {
+        cargarDashboard();
+        cargarProductos();
+        cargarCategorias();
+        cargarProveedores();
+        cargarOrdenes();
+    }
+
+    // 1. Dashboard Stock (ms-inventario :3003) con Multi-Endpoint Fallback
+    async function cargarDashboard() {
+        const tabla = document.getElementById('tablaAlertas');
+        const rutasInventario = [
+            'http://localhost:3003/inventario',
+            'http://localhost:3003/inventarios',
+            'http://localhost:3003/stock',
+            'http://localhost:3003/alertas'
+        ];
+
+        let items = null;
+
+        for (const url of rutasInventario) {
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    items = await res.json();
+                    break;
+                }
+            } catch (e) {
+                // Intentar con la siguiente ruta
+            }
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #313244;
-        }
-        th { background-color: #313244; color: #b4befe; }
-        tr:hover { background-color: #2a2a3c; }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .form-group { display: flex; flex-direction: column; }
-        label { font-size: 0.85rem; color: #a6adc8; margin-bottom: 0.3rem; }
-        input {
-            background-color: #313244;
-            border: 1px solid #45475a;
-            padding: 10px;
-            border-radius: 6px;
-            color: #cdd6f4;
-            outline: none;
-        }
-        input:focus { border-color: #89b4fa; }
-        .btn-submit {
-            grid-column: span 2;
-            background-color: #89b4fa;
-            color: #11111b;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-        .btn-submit:hover { background-color: #b4befe; }
-        .mensaje {
-            grid-column: span 2;
-            margin-top: 0.5rem;
-            padding: 10px;
-            border-radius: 6px;
-            display: none;
-            font-size: 0.9rem;
-        }
-        .exito { background-color: #31493f; color: #a6e3a1; border: 1px solid #a6e3a1; }
-        .error { background-color: #502b37; color: #f38ba8; border: 1px solid #f38ba8; }
-        .seccion { display: none; }
-        .seccion.activa { display: block; }
-    </style>
-</head>
-<body>
+        if (items && Array.isArray(items)) {
+            if (items.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay registros de inventario.</td></tr>';
+                return;
+            }
+            tabla.innerHTML = items.map(i => {
+                const stockAct = i.stock_actual ?? i.cantidad ?? i.stock ?? 0;
+                const stockMin = i.stock_minimo ?? i.minimo ?? 5;
+                const esBajo = stockAct <= stockMin;
 
-    <div class="container">
-        <!-- Encabezado con información del usuario -->
-        <div class="header">
-            <div>
-                <h1 id="bienvenida">Cargando...</h1>
-                <span id="badge" class="user-badge">ROL: ...</span>
-            </div>
-            <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-
-        <!-- BARRA DE NAVEGACIÓN (6 PANTALLAS EN TOTAL) -->
-        <nav class="navbar">
-            <button class="nav-btn active" onclick="verPantalla('dashboard', this)">📊 1. Dashboard Stock</button>
-            <button class="nav-btn" onclick="verPantalla('productos', this)">📦 2. Productos</button>
-            <button class="nav-btn" onclick="verPantalla('categorias', this)">🏷️ 3. Categorías</button>
-            <button class="nav-btn" onclick="verPantalla('proveedores', this)">🏢 4. Proveedores</button>
-            <button class="nav-btn" onclick="verPantalla('ordenes', this)">📋 5. Órdenes Compra</button>
-        </nav>
-
-        <!-- PANTALLA 1: DASHBOARD DE STOCK -->
-        <div id="pantalla-dashboard" class="seccion activa">
-            <div class="card">
-                <h2>📊 Alertas de Bajo Stock (ms-inventario :3003)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Producto</th>
-                            <th>Stock Actual</th>
-                            <th>Stock Mínimo</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaAlertas">
-                        <tr><td colspan="4" style="text-align: center;">Cargando inventario...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- PANTALLA 2: PRODUCTOS -->
-        <div id="pantalla-productos" class="seccion">
-            <div class="card">
-                <h2>📦 Catálogo de Productos (ms-productos :3002)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Categoría ID</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaProductos">
-                        <tr><td colspan="4" style="text-align: center;">Cargando productos...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- PANTALLA 3: CATEGORÍAS -->
-        <div id="pantalla-categorias" class="seccion">
-            <div class="card">
-                <h2>🏷️ Categorías de Productos (ms-productos :3002)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Categoría</th>
-                            <th>Nombre Categoría</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaCategorias">
-                        <tr><td colspan="2" style="text-align: center;">Cargando categorías...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- PANTALLA 4: PROVEEDORES -->
-        <div id="pantalla-proveedores" class="seccion">
-            <div class="card">
-                <h2>🏢 Directorio de Proveedores (ms-proveedores :3005)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre Empresa</th>
-                            <th>Teléfono / Contacto</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaProveedores">
-                        <tr><td colspan="3" style="text-align: center;">Cargando proveedores...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- PANTALLA 5: ÓRDENES DE COMPRA -->
-        <div id="pantalla-ordenes" class="seccion">
-            <div class="card">
-                <h2>➕ Crear Nueva Orden de Compra</h2>
-                <form id="formOrden" class="form-grid">
-                    <div class="form-group">
-                        <label for="proveedor_id">ID Proveedor:</label>
-                        <input type="number" id="proveedor_id" min="1" placeholder="Ej: 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="producto_id">ID Producto (Inventario):</label>
-                        <input type="number" id="producto_id" min="1" placeholder="Ej: 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="total">Monto Total ($):</label>
-                        <input type="number" step="0.01" min="0.01" id="total" placeholder="Ej: 250.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="fecha_emision">Fecha de Emisión:</label>
-                        <input type="date" id="fecha_emision" required>
-                    </div>
-                    <button type="submit" class="btn-submit">Registrar Orden</button>
-                    <div id="mensajeForm" class="mensaje"></div>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>📦 Listado de Órdenes (ms-ordenes :3007)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Orden</th>
-                            <th>Proveedor</th>
-                            <th>Total</th>
-                            <th>Fecha de Emisión</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaOrdenes">
-                        <tr><td colspan="4" style="text-align: center;">Cargando órdenes...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const token = localStorage.getItem('token');
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-        if (!token || !usuario) {
-            window.location.href = 'index.html';
+                return `
+                    <tr>
+                        <td>#${i.producto_id || i.id}</td>
+                        <td><strong>${stockAct}</strong></td>
+                        <td>${stockMin}</td>
+                        <td>
+                            <span style="color:${esBajo ? '#f38ba8' : '#a6e3a1'}; font-weight: bold;">
+                                ${esBajo ? '⚠️ Bajo Stock' : '✅ Stock Normal'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         } else {
-            document.getElementById('bienvenida').innerText = `¡Hola, ${usuario.nombre}! 👋`;
-            document.getElementById('badge').innerText = `ROL: ${usuario.rol.toUpperCase()}`;
-            document.getElementById('fecha_emision').valueAsDate = new Date();
-            cargarTodo();
+            tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">No se pudo conectar con ms-inventario (:3003). Revisa que el servicio esté corriendo.</td></tr>';
         }
+    }
 
-        // Navegación entre las 6 Vistas
-        function verPantalla(id, btn) {
-            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`pantalla-${id}`).classList.add('activa');
-            btn.classList.add('active');
-        }
-
-        async function cargarTodo() {
-            cargarDashboard();
-            cargarProductos();
-            cargarCategorias();
-            cargarProveedores();
-            cargarOrdenes();
-        }
-
-        // 1. Dashboard Stock (ms-inventario :3003)
-        async function cargarDashboard() {
-            try {
-                const res = await fetch('http://localhost:3003/inventario').catch(() => null);
-                const tabla = document.getElementById('tablaAlertas');
-                if (res && res.ok) {
-                    const items = await res.json();
-                    if(items.length === 0) {
-                        tabla.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay registros de inventario.</td></tr>';
-                        return;
-                    }
-                    tabla.innerHTML = items.map(i => `
-                        <tr>
-                            <td>#${i.producto_id || i.id}</td>
-                            <td><strong>${i.stock_actual ?? i.cantidad ?? 0}</strong></td>
-                            <td>${i.stock_minimo || 5}</td>
-                            <td><span style="color:${(i.stock_actual ?? i.cantidad ?? 0) <= (i.stock_minimo || 5) ? '#f38ba8' : '#a6e3a1'}">
-                                ${(i.stock_actual ?? i.cantidad ?? 0) <= (i.stock_minimo || 5) ? '⚠️ Bajo Stock' : '✅ Ok'}
-                            </span></td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">Servicio inventario (:3003) sin datos directos.</td></tr>';
-                }
-            } catch(e) {}
-        }
-
-        // 2. Productos (ms-productos :3002)
-        async function cargarProductos() {
-            try {
-                const res = await fetch('http://localhost:3002/productos').catch(() => null);
-                const tabla = document.getElementById('tablaProductos');
-                if (res && res.ok) {
-                    const prods = await res.json();
-                    tabla.innerHTML = prods.map(p => `
-                        <tr>
-                            <td>#${p.id}</td>
-                            <td><strong>${p.nombre}</strong></td>
-                            <td>$${parseFloat(p.precio || 0).toFixed(2)}</td>
-                            <td>#${p.categoria_id || 'N/A'}</td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">Conectando con ms-productos...</td></tr>';
-                }
-            } catch(e) {}
-        }
-
-        // 3. Categorías (ms-productos :3002)
-        async function cargarCategorias() {
-            try {
-                const res = await fetch('http://localhost:3002/categorias').catch(() => null);
-                const tabla = document.getElementById('tablaCategorias');
-                if (res && res.ok) {
-                    const cats = await res.json();
-                    tabla.innerHTML = cats.map(c => `
-                        <tr>
-                            <td>#${c.id}</td>
-                            <td><strong>${c.nombre}</strong></td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tabla.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#a6adc8;">Consulta en ms-productos...</td></tr>';
-                }
-            } catch(e) {}
-        }
-
-        // 4. Proveedores (ms-proveedores :3005)
-        async function cargarProveedores() {
-            try {
-                const res = await fetch('http://localhost:3005/proveedores').catch(() => null);
-                const tabla = document.getElementById('tablaProveedores');
-                if (res && res.ok) {
-                    const provs = await res.json();
-                    tabla.innerHTML = provs.map(p => `
-                        <tr>
-                            <td>#${p.id}</td>
-                            <td><strong>${p.nombre_empresa || p.nombre}</strong></td>
-                            <td>${p.telefono || p.contacto || 'N/A'}</td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#a6adc8;">Conectando con ms-proveedores...</td></tr>';
-                }
-            } catch(e) {}
-        }
-
-        // 5. Órdenes (ms-ordenes :3007)
-        async function cargarOrdenes() {
-            const tabla = document.getElementById('tablaOrdenes');
-            try {
-                const [resOrdenes, resProvs] = await Promise.all([
-                    fetch('http://localhost:3007/ordenes'),
-                    fetch('http://localhost:3005/proveedores').catch(() => null)
-                ]);
-
-                if (!resOrdenes.ok) throw new Error('Error al consultar las órdenes');
-                
-                const ordenes = await resOrdenes.json();
-                let mapaProveedores = {};
-
-                if (resProvs && resProvs.ok) {
-                    const proveedores = await resProvs.json();
-                    proveedores.forEach(p => {
-                        mapaProveedores[p.id] = p.nombre_empresa || p.nombre || `Proveedor #${p.id}`;
-                    });
-                }
-                
-                if (ordenes.length === 0) {
-                    tabla.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay órdenes registradas.</td></tr>';
+    // 2. Productos (ms-productos :3002)
+    async function cargarProductos() {
+        const tabla = document.getElementById('tablaProductos');
+        try {
+            const res = await fetch('http://localhost:3002/productos');
+            if (res.ok) {
+                const prods = await res.json();
+                if (prods.length === 0) {
+                    tabla.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay productos registrados.</td></tr>';
                     return;
                 }
-
-                tabla.innerHTML = ordenes.map(o => {
-                    const fecha = o.fecha_emision 
-                        ? new Date(o.fecha_emision).toLocaleDateString() 
-                        : 'Sin fecha';
-                    const idLimpio = o.proveedor_id ? Math.abs(o.proveedor_id) : 'N/A';
-                    const nombreProveedor = mapaProveedores[o.proveedor_id] || `Proveedor #${idLimpio}`;
-
-                    return `
-                        <tr>
-                            <td>#${o.id}</td>
-                            <td><strong>${nombreProveedor}</strong></td>
-                            <td>$${parseFloat(o.total || 0).toFixed(2)}</td>
-                            <td>${fecha}</td>
-                        </tr>
-                    `;
-                }).join('');
-
-            } catch (err) {
-                tabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #f38ba8;">Error al conectar con los microservicios.</td></tr>`;
+                tabla.innerHTML = prods.map(p => `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td><strong>${p.nombre}</strong></td>
+                        <td>$${parseFloat(p.precio || 0).toFixed(2)}</td>
+                        <td>#${p.categoria_id || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                throw new Error();
             }
+        } catch(e) {
+            tabla.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a6adc8;">Servicio ms-productos (:3002) no disponible.</td></tr>';
         }
+    }
 
-        // Evento Crear Orden
-        document.getElementById('formOrden').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const mensajeDiv = document.getElementById('mensajeForm');
-            mensajeDiv.style.display = 'none';
-
-            const payload = {
-                proveedor_id: parseInt(document.getElementById('proveedor_id').value),
-                producto_id: parseInt(document.getElementById('producto_id').value),
-                total: parseFloat(document.getElementById('total').value),
-                fecha_emision: document.getElementById('fecha_emision').value
-            };
-
-            try {
-                const res = await fetch('http://localhost:3007/ordenes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    mensajeDiv.className = 'mensaje exito';
-                    mensajeDiv.innerText = '✅ Orden creada exitosamente (Validado con ms-inventario)';
-                    mensajeDiv.style.display = 'block';
-                    
-                    document.getElementById('proveedor_id').value = '';
-                    document.getElementById('producto_id').value = '';
-                    document.getElementById('total').value = '';
-                    cargarOrdenes();
-                } else {
-                    throw new Error(data.error || 'Error al crear la orden');
+    // 3. Categorías (ms-productos :3002)
+    async function cargarCategorias() {
+        const tabla = document.getElementById('tablaCategorias');
+        try {
+            const res = await fetch('http://localhost:3002/categorias');
+            if (res.ok) {
+                const cats = await res.json();
+                if (cats.length === 0) {
+                    tabla.innerHTML = '<tr><td colspan="2" style="text-align:center;">No hay categorías registradas.</td></tr>';
+                    return;
                 }
-            } catch (err) {
-                mensajeDiv.className = 'mensaje error';
-                mensajeDiv.innerText = `❌ ${err.message}`;
-                mensajeDiv.style.display = 'block';
+                tabla.innerHTML = cats.map(c => `
+                    <tr>
+                        <td>#${c.id}</td>
+                        <td><strong>${c.nombre || c.nombre_categoria}</strong></td>
+                    </tr>
+                `).join('');
+            } else {
+                throw new Error();
             }
-        });
-
-        function cerrarSesion() {
-            localStorage.clear();
-            window.location.href = 'index.html';
+        } catch(e) {
+            tabla.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#a6adc8;">Servicio ms-productos (:3002) no disponible.</td></tr>';
         }
-    </script>
-</body>
-</html>
+    }
+
+    // 4. Proveedores (ms-proveedores :3005)
+    async function cargarProveedores() {
+        const tabla = document.getElementById('tablaProveedores');
+        try {
+            const res = await fetch('http://localhost:3005/proveedores');
+            if (res.ok) {
+                const provs = await res.json();
+                if (provs.length === 0) {
+                    tabla.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay proveedores registrados.</td></tr>';
+                    return;
+                }
+                tabla.innerHTML = provs.map(p => `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td><strong>${p.nombre_empresa || p.nombre}</strong></td>
+                        <td>${p.telefono || p.contacto || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                throw new Error();
+            }
+        } catch(e) {
+            tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#a6adc8;">Servicio ms-proveedores (:3005) no disponible.</td></tr>';
+        }
+    }
+
+    // 5. Órdenes (ms-ordenes :3007)
+    async function cargarOrdenes() {
+        const tabla = document.getElementById('tablaOrdenes');
+        try {
+            const [resOrdenes, resProvs] = await Promise.all([
+                fetch('http://localhost:3007/ordenes'),
+                fetch('http://localhost:3005/proveedores').catch(() => null)
+            ]);
+
+            if (!resOrdenes.ok) throw new Error('Error al consultar órdenes');
+            
+            const ordenes = await resOrdenes.json();
+            let mapaProveedores = {};
+
+            if (resProvs && resProvs.ok) {
+                const proveedores = await resProvs.json();
+                proveedores.forEach(p => {
+                    mapaProveedores[p.id] = p.nombre_empresa || p.nombre || `Proveedor #${p.id}`;
+                });
+            }
+            
+            if (ordenes.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay órdenes registradas.</td></tr>';
+                return;
+            }
+
+            tabla.innerHTML = ordenes.map(o => {
+                const fecha = o.fecha_emision 
+                    ? new Date(o.fecha_emision).toLocaleDateString() 
+                    : 'Sin fecha';
+                const idLimpio = o.proveedor_id ? Math.abs(o.proveedor_id) : 'N/A';
+                const nombreProveedor = mapaProveedores[o.proveedor_id] || `Proveedor #${idLimpio}`;
+
+                return `
+                    <tr>
+                        <td>#${o.id}</td>
+                        <td><strong>${nombreProveedor}</strong></td>
+                        <td>$${parseFloat(o.total || 0).toFixed(2)}</td>
+                        <td>${fecha}</td>
+                    </tr>
+                `;
+            }).join('');
+
+        } catch (err) {
+            tabla.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #f38ba8;">Servicio ms-ordenes (:3007) no disponible.</td></tr>`;
+        }
+    }
+
+    // Evento Crear Orden
+    document.getElementById('formOrden').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const mensajeDiv = document.getElementById('mensajeForm');
+        mensajeDiv.style.display = 'none';
+
+        const payload = {
+            proveedor_id: parseInt(document.getElementById('proveedor_id').value),
+            producto_id: parseInt(document.getElementById('producto_id').value),
+            total: parseFloat(document.getElementById('total').value),
+            fecha_emision: document.getElementById('fecha_emision').value
+        };
+
+        try {
+            const res = await fetch('http://localhost:3007/ordenes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                mensajeDiv.className = 'mensaje exito';
+                mensajeDiv.innerText = '✅ Orden creada exitosamente (Validado con ms-inventario)';
+                mensajeDiv.style.display = 'block';
+                
+                document.getElementById('proveedor_id').value = '';
+                document.getElementById('producto_id').value = '';
+                document.getElementById('total').value = '';
+                cargarOrdenes();
+                cargarDashboard();
+            } else {
+                throw new Error(data.error || 'Error al crear la orden');
+            }
+        } catch (err) {
+            mensajeDiv.className = 'mensaje error';
+            mensajeDiv.innerText = `❌ ${err.message}`;
+            mensajeDiv.style.display = 'block';
+        }
+    });
+
+    function cerrarSesion() {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    }
+</script>
